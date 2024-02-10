@@ -19,5 +19,7 @@
         public DateTime FechaElimino { get; set; }
 
         public bool Eliminado { get; set; }
+
+        public decimal? Total { get; set; }
     }
 }
