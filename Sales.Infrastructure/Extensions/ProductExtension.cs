@@ -1,7 +1,7 @@
 ﻿
 namespace Sales.Infrastructure.Extentions
 {
-    public static class ProductExtention
+    public static class ProductExtension
     {
 
     }
