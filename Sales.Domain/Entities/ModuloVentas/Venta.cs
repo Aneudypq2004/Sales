@@ -1,8 +1,8 @@
-﻿
+﻿using Sales.Domain.Core;
 
 namespace Sales.Domain.Entities
 {
-    public class Venta
+    public class Venta : BaseEntity
     {
         public string? NumeroVenta { get; set; }
 
