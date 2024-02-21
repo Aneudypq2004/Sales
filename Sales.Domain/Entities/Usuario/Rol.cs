@@ -1,6 +1,6 @@
-﻿namespace Sales.Domain.Entities
+﻿namespace Sales.Domain.Entities.Usuario.Usuario
 {
-   public class Rol
+    public class Rol
     {
         public int Id { get; set; }
 

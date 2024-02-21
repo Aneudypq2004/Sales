@@ -1,6 +1,6 @@
 ﻿using Sales.Domain.Core;
 
-namespace Sales.Domain.Entities
+namespace Sales.Domain.Entities.ModuloUsuario
 {
     public class Usuario : BaseEntity
     {

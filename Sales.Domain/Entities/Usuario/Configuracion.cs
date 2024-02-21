@@ -1,4 +1,4 @@
-﻿namespace Sales.Domain.Entities
+﻿namespace Sales.Domain.Entities.Usuario.Usuario
 {
     public class Configuracion
     {
