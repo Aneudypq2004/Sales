@@ -72,7 +72,7 @@ namespace Sales.Infrastructure.Repositories
 
                 user.FechaElimino = RemoveUser.FechaElimino;
 
-                _context.Usuarios!.Update(RemoveUser);
+                _context.Usuarios!.Update(user);
 
                 _context.SaveChangesAsync();
 
