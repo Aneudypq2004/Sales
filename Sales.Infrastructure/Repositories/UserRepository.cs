@@ -7,31 +7,31 @@ namespace Sales.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly SalesContext _context;
+        private readonly SalesContext context;
 
         public UserRepository(SalesContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         public void Create(Usuario NewUser)
         {
             try
             {
-                var existUser = _context.Usuarios!.FirstOrDefault(u => u.Correo == NewUser.Correo);
+                var existUser = context.Usuarios!.FirstOrDefault(u => u.Correo == NewUser.Correo);
 
                 if(existUser is not null)
                 {
                     throw new UserException("Ya existe un usuario con este correo");
                 }
-                _context.Usuarios!.Add(NewUser);
 
-                _context.SaveChangesAsync();
+                context.Usuarios!.Add(NewUser);
+
+                context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-
-                throw;
+                throw new UserException("No se pudo crear el usuario - " + exc.Message);
             }
         }
 
@@ -39,11 +39,11 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                return _context.Usuarios!.Where(user => !user.Eliminado).ToList();
+                return context.Usuarios!.Where(user => !user.Eliminado).ToList();
             }
             catch (Exception)
             {
-                throw;
+                throw new UserException("No se pudo obtener los usuarios");
             }
         }
 
@@ -51,12 +51,12 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-               return _context.Usuarios!.Find(id);
+               return context.Usuarios!.Find(id);
             }
-            catch (Exception)
+            catch (Exception exc)
             {
 
-                throw;
+                throw new UserException("No se pudo obtener el usuario " + exc.Message);
             }
         }
 
@@ -72,15 +72,15 @@ namespace Sales.Infrastructure.Repositories
 
                 user.FechaElimino = RemoveUser.FechaElimino;
 
-                _context.Usuarios!.Update(user);
+                context.Usuarios!.Update(user);
 
-                _context.SaveChangesAsync();
+                context.SaveChangesAsync();
 
             }
-            catch (Exception)
+            catch (Exception exc)
             {
 
-                throw;
+                throw new UserException("No se pudo eliminar el usuario - " + exc.Message);
             }
         }
 
@@ -95,15 +95,15 @@ namespace Sales.Infrastructure.Repositories
                 user.FechaMod = DateTime.Now;
                 user.IdUsuarioMod = UpdateUser.IdUsuarioMod;
     
-                _context.Usuarios!.Update(user);
+                context.Usuarios!.Update(user);
 
-                _context.SaveChangesAsync();
+                context.SaveChangesAsync();
 
             }
-            catch (Exception)
+            catch (Exception exc)
             {
 
-                throw;
+                throw new UserException("No se pudo actualizar el usuario - " + exc.Message);
             }
         }
     }

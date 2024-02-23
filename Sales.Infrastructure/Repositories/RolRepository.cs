@@ -7,32 +7,32 @@ namespace Sales.Infrastructure.Repositories
 {
     public class RolRepository : IRolRepository
     {
-        private readonly SalesContext _context;
+        private readonly SalesContext context;
 
         public RolRepository(SalesContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         public void Create(Rol NewRol)
         {
             try
             {
-                var existUser = _context.Rol!.FirstOrDefault(r => r.Descripcion == NewRol.Descripcion);
+                var existUser = context.Rol!.FirstOrDefault(r => r.Descripcion == NewRol.Descripcion);
 
                 if (existUser is not null)
                 {
                     throw new RolException("El Rol ya existe");
                 }
 
-                _context.Rol!.Add(NewRol);
+                context.Rol!.Add(NewRol);
 
-                _context.SaveChangesAsync();
+                context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception exc)
             {
 
-                throw ;
+                throw new RolException("No se pudo crear el rol - " + exc.Message); ;
             }
         }
 
@@ -40,11 +40,11 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                return _context.Rol!.Where(r => !r.Eliminado).ToList();
+                return context.Rol!.Where(r => !r.Eliminado).ToList();
             }
             catch (Exception)
             {
-                throw;
+               throw new RolException("No se pudo obtener los roles");
             }
         }
 
@@ -52,12 +52,12 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                return _context.Rol!.Find(id);
+                return context.Rol!.Find(id);
             }
             catch (Exception)
             {
 
-                throw;
+                throw new RolException("No se pudo obtener el rol");
             }
         }
 
@@ -73,15 +73,15 @@ namespace Sales.Infrastructure.Repositories
 
                 rol.FechaElimino = RemoveRol.FechaElimino;
 
-                _context.Rol!.Update(rol);
+                context.Rol!.Update(rol);
 
-                _context.SaveChangesAsync();
+                context.SaveChangesAsync();
 
             }
-            catch (Exception)
+            catch (Exception exc)
             {
 
-                throw;
+                throw new RolException("No se pudo eliminar el rol - " + exc.Message); ;
             }
 
         }
@@ -96,14 +96,14 @@ namespace Sales.Infrastructure.Repositories
                 rol.FechaMod = DateTime.Now;
                 rol.IdUsuarioMod = UpdateRol.IdUsuarioMod;
 
-                _context.Rol!.Update(rol);
-                _context.SaveChangesAsync();
+                context.Rol!.Update(rol);
+                context.SaveChangesAsync();
 
             }
-            catch (Exception)
+            catch (Exception exc)
             {
 
-                throw;
+                throw new RolException("No se pudo actualizar el rol - " + exc.Message); ;
             }
         }
     }

@@ -51,9 +51,7 @@ namespace Sales.Infrastructure.Repositories
             {
                 throw new ConfigurationException(exc.Message);
             }
-        }
-
-     
+        }  
 
         public void Remove(Configuracion RemoveConfiguracion)
         {
