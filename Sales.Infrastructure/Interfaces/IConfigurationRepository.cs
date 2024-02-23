@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sales.Domain.Entities.Usuario.Usuario;
 
 namespace Sales.Infrastructure.Interfaces
 {
-    internal interface IConfigurationRepository
+    public interface IConfigurationRepository
     {
+        void Create(Configuracion configuration);
+        void Update(Configuracion UpdateConfiguracion);
+        void Remove(Configuracion RemoveConfiguracion);
+        List<Configuracion> GetConfigurations();
+        Configuracion? GetConfiguracionById(int IdConfiguracion);
     }
 }
