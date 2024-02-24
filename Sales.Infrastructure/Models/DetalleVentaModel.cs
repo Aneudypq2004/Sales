@@ -1,7 +1,7 @@
-﻿using Sales.Domain.Core;
+﻿
 namespace Sales.Domain.Entities.ModuloVentas
 {
-    public class DetalleVenta : BaseEntity
+    public class DetalleVentaModel
     {
         public int IdVenta { get; set; }
         public int IdProducto { get; set;}
@@ -10,7 +10,7 @@ namespace Sales.Domain.Entities.ModuloVentas
 
         public string? DescripcionProducto { get; set;}
 
-        public string? CategoriaProducto { get; set; }
+        public string? CategoriaProducto { get;}
         
         public int? Cantidad { get; set;}
 

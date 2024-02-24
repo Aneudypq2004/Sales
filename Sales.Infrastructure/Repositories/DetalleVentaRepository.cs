@@ -1,38 +1,81 @@
-﻿using Sales.Domain.Entities.ModuloVentas;
+﻿
+using Sales.Domain.Entities.ModuloVentas;
+using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Inteface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sales.Infrastructure.Repositories
 {
     public class DetalleVentaRepository : IDetalleVentaRepository
     {
-        public void Create(DetalleVenta tipoDocumentoVenta)
+        private readonly SalesContext context;
+        public DetalleVentaRepository(SalesContext context) { 
+            
+            this.context = context;
+        }
+
+        public void Create(DetalleVenta DetalleVenta)
         {
+            try
+            {
+
+                this.context.DetalleVentas.Add(DetalleVenta);
+                this.context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             
         }
 
-        public DetalleVenta GetDetalleVenta(int id)
+        public DetalleVenta? GetDetalleVenta(int id)
         {
-            throw new NotImplementedException();
+            return this.context.DetalleVentas!.Find(id);
         }
 
         public List<DetalleVenta> GetDetalleVentas()
         {
-            throw new NotImplementedException();
+            return this.context.DetalleVentas
+                                             .Where(DetalleVenta=> !DetalleVenta.Eliminado)
+                                             .ToList();
+
         }
 
-        public void Remove(DetalleVenta tipoDocumentoVenta)
+        public void Remove(DetalleVenta DetalleVenta)
         {
-            
+            try
+            {
+                var detalleVentaToRemove = this.GetDetalleVenta(DetalleVenta.Id);
+
+                detalleVentaToRemove.Eliminado = true;
+                detalleVentaToRemove.FechaElimino = DetalleVenta.FechaElimino;
+                detalleVentaToRemove.IdUsuarioElimino = DetalleVenta.IdUsuarioElimino;
+
+                this.context.DetalleVentas?.Update(DetalleVenta);
+                this.context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public void Update(DetalleVenta tipoDocumentoVenta)
+        public void Update(DetalleVenta DetalleVenta)
         {
-            
+            var detalleVentaToUpdate = this.GetDetalleVenta(DetalleVenta.Id);
+
+            detalleVentaToUpdate.MarcaProducto = DetalleVenta.MarcaProducto;
+            detalleVentaToUpdate.DescripcionProducto = DetalleVenta.DescripcionProducto;
+            detalleVentaToUpdate.CategoriaProducto = DetalleVenta.CategoriaProducto;
+            detalleVentaToUpdate.Cantidad = DetalleVenta.Cantidad;
+            detalleVentaToUpdate.Precio = DetalleVenta.Precio;
+            detalleVentaToUpdate.Total = DetalleVenta.Total;
+
+         
+
+            this.context.DetalleVentas.Update(detalleVentaToUpdate);
+            this.context.SaveChanges();
         }
     }
 }

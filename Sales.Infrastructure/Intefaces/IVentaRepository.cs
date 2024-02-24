@@ -6,12 +6,12 @@ namespace Sales.Infrastructure.Inteface
 {
     public interface IVentaRepository
     {
-        void Create(Venta tipoDocumentoVenta);
-        void Update(Venta tipoDocumentoVenta);
-        void Remove(Venta tipoDocumentoVenta);
+        void Create(Venta venta);
+        void Update(Venta venta);
+        void Remove(Venta venta);
 
         List<Venta> GetVentas();
 
-        Venta GetVenta(int id);
+        Venta? GetVenta(int id);
     }
 }

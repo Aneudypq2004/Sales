@@ -1,0 +1,2 @@
+﻿Hay que configurar 
+** hay que quitarles la dependencia de la baseEntity

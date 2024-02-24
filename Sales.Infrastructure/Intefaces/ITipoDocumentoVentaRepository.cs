@@ -12,6 +12,6 @@ namespace Sales.Infrastructure.Inteface
 
         List<TipoDocumentoVenta> GetTipoDocumentoVentas();
 
-        TipoDocumentoVenta GetTipoDocumentoVenta(int id);
+        TipoDocumentoVenta? GetTipoDocumentoVenta(int id);
     }
 }
