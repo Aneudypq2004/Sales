@@ -17,7 +17,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                this.context.Producto.Add(product);
+                context.Producto.Add(product);
                 this.context.SaveChanges();
             }
             catch (Exception)
@@ -28,12 +28,12 @@ namespace Sales.Infrastructure.Repositories
 
         public Product? GetProduct(int id)
         {
-            return this.context.Producto.Find();
+            return context.Producto.Find(id);
         }
 
         public List<Product> GetProducts()
         {
-            return this.context.Producto.Where(ca => !ca.Eliminado).ToList();
+            return context.Producto.Where(ca => !ca.Eliminado).ToList();
         }
 
         public void Remove(Product product)
@@ -46,7 +46,7 @@ namespace Sales.Infrastructure.Repositories
                 ProductToRemove.FechaElimino = product.FechaElimino;
                 ProductToRemove.IdUsuarioElimino = product.IdUsuarioElimino;
 
-                this.context.Producto.Update(ProductToRemove);
+                context.Producto.Update(ProductToRemove);
                 this.context.SaveChanges();
             }
             catch (Exception)
@@ -66,7 +66,7 @@ namespace Sales.Infrastructure.Repositories
                 ProductToUpdate.IdUsuarioMod = product.IdUsuarioMod;
                 ProductToUpdate.FechaMod = product.FechaMod;
 
-                this.context.Producto.Update(ProductToUpdate);
+                context.Producto.Update(ProductToUpdate);
                 this.context.SaveChanges();
             }
             catch(Exception) 

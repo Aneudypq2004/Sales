@@ -16,7 +16,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                this.context.Categoria.Add(category);
+                context.Categoria.Add(category);
                 this.context.SaveChanges();
             }
             catch (Exception ex)
@@ -27,12 +27,12 @@ namespace Sales.Infrastructure.Repositories
 
         public Category? GetCategory(int id)
         {
-            return this.context.Categoria.Find();
+            return context.Categoria.Find(id);
         }
 
         public List<Category> GetCategories()
         {
-            return this.context.Categoria.Where(ca => !ca.Eliminado).ToList();
+            return context.Categoria.Where(ca => !ca.Eliminado).ToList();
         }
 
         public void Remove(Category category)
@@ -65,8 +65,8 @@ namespace Sales.Infrastructure.Repositories
                 CategoryToUpdate.IdUsuarioMod = category.IdUsuarioMod;
                 CategoryToUpdate.FechaMod = category.FechaMod;
 
-                this.context.Categoria.Update(CategoryToUpdate);
-                this.context.SaveChanges();
+                context.Categoria.Update(CategoryToUpdate);
+                context.SaveChanges();
             }
             catch (Exception ex)
             {
