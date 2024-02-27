@@ -1,19 +1,14 @@
 ﻿
+
 using Sales.Infrastructure.Core;
 
 namespace Sales.Infrastructure.Exceptions
 {
-    // Needs a review to confirm is good
-    public class VentaException : IBaseException
-    {   
-
-        public VentaException(string message)
+    
+    public class VentaException : BaseException
+    {
+        public VentaException(string message) : base(message)
         {
-            GuardarLog(message);
-        }
-        public void GuardarLog(string message)
-        {
-
         }
     }
 }

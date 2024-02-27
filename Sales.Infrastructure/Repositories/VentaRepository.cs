@@ -20,16 +20,14 @@ namespace Sales.Infrastructure.Repositories
             try
             {   if (context.Ventas.Any(venta => venta.NumeroVenta == venta.NumeroVenta))
 
-                    /*throw new VentaException("Este numero de venta ya se encuentra registrado");*/
-
-
+              throw new VentaException("Este numero de venta ya se encuentra registrado");
 
                 this.context.Ventas.Add(venta);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 

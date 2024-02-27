@@ -16,6 +16,6 @@ namespace Sales.Domain.Entities.ModuloVentas
 
         public decimal? Precio { get; set;}
 
-        
+
     }
 }

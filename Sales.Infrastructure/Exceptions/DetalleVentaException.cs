@@ -2,7 +2,12 @@
 
 namespace Sales.Infrastructure.Exceptions
 {
-    public class DetalleVentaException: IBaseException
+    public class DetalleVentaException : BaseException
     {
+        public DetalleVentaException(string message) : base(message)
+        {
+        }
     }
 }
+
+/*if (context.Ventas.Any(venta => venta.NumeroVenta == venta.NumeroVenta))*/

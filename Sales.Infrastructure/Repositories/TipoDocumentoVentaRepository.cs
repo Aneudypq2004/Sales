@@ -1,5 +1,6 @@
 ﻿using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Inteface;
 
 namespace Sales.Infrastructure.Repositories
@@ -16,12 +17,16 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
+                if (context.TipoDocumentoVentas.Any(tipoDocumentoVenta => tipoDocumentoVenta.Id == tipoDocumentoVenta.Id))
+
+                    throw new TipoDocumentoVentaException("Este tipo de Documento de Venta ya existe");
+
                 this.context.TipoDocumentoVentas.Add(tipoDocumentoVenta);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
             
         }
@@ -41,13 +46,14 @@ namespace Sales.Infrastructure.Repositories
             try
             {
                 var tipoDocumentoVentaToRemove = this.GetTipoDocumentoVenta(tipoDocumentoVenta.Id);
+
                 tipoDocumentoVentaToRemove.Eliminado = true;
                 tipoDocumentoVentaToRemove.FechaElimino = tipoDocumentoVenta.FechaElimino;
                 tipoDocumentoVentaToRemove.IdUsuarioElimino = tipoDocumentoVenta.IdUsuarioElimino;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -57,7 +63,6 @@ namespace Sales.Infrastructure.Repositories
 
             tipoDocumentoVentaToUpdate.Descripcion = tipoDocumentoVenta.Descripcion;
             tipoDocumentoVentaToUpdate.EsActivo = tipoDocumentoVenta.EsActivo;
-            tipoDocumentoVentaToUpdate.FechaRegistro = tipoDocumentoVenta.FechaRegistro; //Not sure if this should be updated
             tipoDocumentoVentaToUpdate.Eliminado = tipoDocumentoVenta.Eliminado;
 
             this.context.TipoDocumentoVentas.Update(tipoDocumentoVentaToUpdate);

@@ -1,6 +1,7 @@
 ﻿
 using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Inteface;
 
 namespace Sales.Infrastructure.Repositories
@@ -13,12 +14,14 @@ namespace Sales.Infrastructure.Repositories
             this.context = context;
         }
 
-        public void Create(DetalleVenta DetalleVenta)
+        public void Create(DetalleVenta detalleVenta)
         {
             try
             {
+               if (context.DetalleVentas.Any(detalleVenta => detalleVenta.CategoriaProducto == detalleVenta.CategoriaProducto))
 
-                this.context.DetalleVentas.Add(DetalleVenta);
+                throw new DetalleVentaException("Esta Categoria de venta ya se encuentra registrada");
+                this.context.DetalleVentas.Add(detalleVenta);
                 this.context.SaveChanges();
             }
             catch (Exception ex)
