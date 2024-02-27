@@ -1,17 +1,15 @@
 ﻿
 
+
 using Sales.Domain.Entities.ModuloVentas;
+using Sales.Domain.Repository;
 
 namespace Sales.Infrastructure.Inteface
 {
-    public interface ITipoDocumentoVentaRepository
+    public interface ITipoDocumentoVentaRepository: IBaseRepository<TipoDocumentoVenta>
+
     {
-        void Create(TipoDocumentoVenta tipoDocumentoVenta);
-        void Update(TipoDocumentoVenta tipoDocumentoVenta);
-        void Remove(TipoDocumentoVenta tipoDocumentoVenta);
+        //List<TipoDocumentoVentaModel> GetTipoDocumentoVentaById(int Id);
 
-        List<TipoDocumentoVenta> GetTipoDocumentoVentas();
-
-        TipoDocumentoVenta? GetTipoDocumentoVenta(int id);
     }
 }

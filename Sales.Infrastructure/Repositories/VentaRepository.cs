@@ -2,80 +2,83 @@
 
 using Sales.Domain.Entities;
 using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Inteface;
 
 namespace Sales.Infrastructure.Repositories
 {
-    public class VentaRepository : IVentaRepository
+    public class VentaRepository : BaseRepository<Venta>, IVentaRepository
     {
         private readonly SalesContext context;
 
-        public VentaRepository(SalesContext context) { 
+        public VentaRepository(SalesContext context) : base(context){ 
+            
             this.context = context;
         }
 
-        public void Create(Venta venta)
+        public override List<Venta> GetEntities()
+        {
+            return base.GetEntities().Where(venta => !venta.Eliminado)
+                        .ToList();
+        }
+
+        public override void Save(Venta entity)
         {
             try
-            {   if (context.Ventas.Any(venta => venta.NumeroVenta == venta.NumeroVenta))
+            {
+                if (context.Ventas.Any(venta => venta.NumeroVenta == venta.NumeroVenta))
 
-              throw new VentaException("Este numero de venta ya se encuentra registrado");
+                    throw new VentaException("Este numero de venta ya se encuentra registrado");
 
-                this.context.Ventas.Add(venta);
+                this.context.Ventas.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw new DetalleVentaException(ex.Message); ;
             }
         }
 
-        public Venta? GetVenta(int id)
+        public override void Remove(Venta entity)
         {
-            return this.context.Ventas!.Find(id);
-        }
-
-        public List<Venta> GetVentas()
-        {
-            return this.context.Ventas
-                                .Where(venta => !venta.Eliminado)
-                                .ToList();
-        }
-
-        public void Remove(Venta venta)
-        {
-            try{
-                var ventaToRemove = this.GetVenta(venta.Id);// update dthe nullable
+            try
+            {
+                var ventaToRemove = this.GetEntity(entity.Id) ?? throw new TipoDocumentoVentaException("Este tipo de Documento de Venta ya existe");
 
                 ventaToRemove.Eliminado = true;
-                ventaToRemove.FechaElimino = venta.FechaElimino;
-                ventaToRemove.IdUsuarioElimino = venta.IdUsuarioElimino;
+                ventaToRemove.FechaElimino = entity.FechaElimino;
+                ventaToRemove.IdUsuarioElimino = entity.IdUsuarioElimino;
 
                 this.context.Ventas.Update(ventaToRemove);
                 this.context.SaveChanges();
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
 
-                throw ex; //("Esta venta no existe");
+                throw new DetalleVentaException(ex.Message);
             }
-            
         }
 
-        public void Update(Venta venta)
+        public override void Update(Venta entity)
         {
-            var ventaToUpdate = this.GetVenta(venta.Id);
+            try
+            {
+                var ventaToUpdate = this.GetEntity(entity.Id);
 
-            ventaToUpdate.NombreCliente = venta.NombreCliente;
-            ventaToUpdate.CocumentoCliente = venta.CocumentoCliente;
-            ventaToUpdate.SubTotal = venta.SubTotal;
-            ventaToUpdate.ImpuestoTotal= venta.ImpuestoTotal;
-            ventaToUpdate.Total = venta.Total;
+                ventaToUpdate!.NombreCliente = entity.NombreCliente;
+                ventaToUpdate.CocumentoCliente = entity.CocumentoCliente;
+                ventaToUpdate.SubTotal = entity.SubTotal;
+                ventaToUpdate.ImpuestoTotal = entity.ImpuestoTotal;
+                ventaToUpdate.Total = entity.Total;
 
-            //ventaToUpdate.NumeroVenta = venta.NumeroVenta; // not sure if we need to update Numero.Venta
+                this.context.Ventas.Update(ventaToUpdate);
+                this.context.SaveChanges();
 
-            this.context.Ventas.Update(ventaToUpdate);
-            this.context.SaveChanges();
+            }
+            catch (Exception ex){
+                throw new DetalleVentaException(ex.Message);
+            }
         }
     }
 }

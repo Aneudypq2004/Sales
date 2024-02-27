@@ -1,19 +1,27 @@
 ﻿using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Inteface;
 
+
 namespace Sales.Infrastructure.Repositories
 {
-    public class TipoDocumentoVentaRepository : ITipoDocumentoVentaRepository
+    public class TipoDocumentoVentaRepository : BaseRepository<TipoDocumentoVenta>, ITipoDocumentoVentaRepository
     {
         private readonly SalesContext context;
-        public TipoDocumentoVentaRepository(SalesContext context) {
+
+        public TipoDocumentoVentaRepository(SalesContext context) :base (context) {
             
             this.context = context;
         }
 
-        public void Create(TipoDocumentoVenta tipoDocumentoVenta)
+        public override List<TipoDocumentoVenta> GetEntities()
+        {
+            return base.GetEntities().Where(TipoDocumentoVenta => !TipoDocumentoVenta.Eliminado).ToList(); ;
+        }
+
+        public override void Save(TipoDocumentoVenta entity)
         {
             try
             {
@@ -21,54 +29,56 @@ namespace Sales.Infrastructure.Repositories
 
                     throw new TipoDocumentoVentaException("Este tipo de Documento de Venta ya existe");
 
-                this.context.TipoDocumentoVentas.Add(tipoDocumentoVenta);
+                this.context.TipoDocumentoVentas.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw new DetalleVentaException(ex.Message); ;
             }
-            
+
         }
 
-        public TipoDocumentoVenta? GetTipoDocumentoVenta(int id)
-        {
-            return this.context.TipoDocumentoVentas!.Find(id);
-        }
-
-        public List<TipoDocumentoVenta> GetTipoDocumentoVentas()
-        {
-            return this.context.TipoDocumentoVentas.Where(TipoDocumentoVenta => !TipoDocumentoVenta.Eliminado).ToList();
-        }
-
-        public void Remove(TipoDocumentoVenta tipoDocumentoVenta)
+        public override void Remove(TipoDocumentoVenta entity)
         {
             try
             {
-                var tipoDocumentoVentaToRemove = this.GetTipoDocumentoVenta(tipoDocumentoVenta.Id);
+                var tipoDocumentoVentaToRemove = this.GetEntity(entity.Id) ?? throw new TipoDocumentoVentaException("Este tipo de Documento de Venta no existe para ser eliminado");
 
                 tipoDocumentoVentaToRemove.Eliminado = true;
-                tipoDocumentoVentaToRemove.FechaElimino = tipoDocumentoVenta.FechaElimino;
-                tipoDocumentoVentaToRemove.IdUsuarioElimino = tipoDocumentoVenta.IdUsuarioElimino;
+                tipoDocumentoVentaToRemove.FechaElimino = entity.FechaElimino;
+                tipoDocumentoVentaToRemove.IdUsuarioElimino = entity.IdUsuarioElimino;
+
+
+                this.context.TipoDocumentoVentas.Update(tipoDocumentoVentaToRemove);
+                this.context.SaveChanges();
+
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw new DetalleVentaException(ex.Message);
             }
+
         }
 
-        public void Update(TipoDocumentoVenta tipoDocumentoVenta)
+        public override void Update(TipoDocumentoVenta entity)
         {
-            var tipoDocumentoVentaToUpdate = this.GetTipoDocumentoVenta(tipoDocumentoVenta.Id);
+            try
+            {
+                var tipoDocumentoVentaToUpdate = this.GetEntity(entity.Id) ?? throw new TipoDocumentoVentaException("Este tipo de Documento de Venta no existe para ser Actualizado");
 
-            tipoDocumentoVentaToUpdate.Descripcion = tipoDocumentoVenta.Descripcion;
-            tipoDocumentoVentaToUpdate.EsActivo = tipoDocumentoVenta.EsActivo;
-            tipoDocumentoVentaToUpdate.Eliminado = tipoDocumentoVenta.Eliminado;
+                tipoDocumentoVentaToUpdate.Descripcion = entity.Descripcion;
+                tipoDocumentoVentaToUpdate.EsActivo = entity.EsActivo;
+                tipoDocumentoVentaToUpdate.Eliminado = entity.Eliminado;
 
-            this.context.TipoDocumentoVentas.Update(tipoDocumentoVentaToUpdate);
-            this.context.SaveChanges();
+                this.context.TipoDocumentoVentas.Update(tipoDocumentoVentaToUpdate);
+                this.context.SaveChanges();
 
-            
+            }
+            catch (Exception ex)
+            {
+                throw new DetalleVentaException(ex.Message);
+            }
         }
     }
 }

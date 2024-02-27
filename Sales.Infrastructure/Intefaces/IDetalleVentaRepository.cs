@@ -1,16 +1,12 @@
 ﻿
 using Sales.Domain.Entities.ModuloVentas;
+using Sales.Domain.Repository;
 
 namespace Sales.Infrastructure.Inteface
 {
-    public interface IDetalleVentaRepository
+    public interface IDetalleVentaRepository: IBaseRepository <DetalleVenta>
     {
-        void Create(DetalleVenta DetalleVenta);
-        void Update(DetalleVenta DetalleVenta);
-        void Remove(DetalleVenta DetalleVenta);
-
-        List<DetalleVenta> GetDetalleVentas();
-
-        DetalleVenta? GetDetalleVenta(int id);
+        //List<DetalleVentaModel> GetDetalleVentaModelByVenta(int IdVenta);
+        //List<DetalleVentaModel> GetDetalleVentaModelByProducto(int IdProducto);
     }
 }
