@@ -1,13 +1,10 @@
 ﻿using Sales.Domain.Entities.ModuloUsuario;
+using Sales.Domain.Repository;
 
 namespace Sales.Infrastructure.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IBaseRepository<Usuario>
     {
-        void Create(Usuario NewUser);
-        void Update(Usuario UpdateUser);
-        void Remove(Usuario RemoveUser);
-        List<Usuario> GetAllUsers();
-        Usuario? GetUserById(int id);
+        Usuario? GetUserByEmail(string Email);
     }
 }

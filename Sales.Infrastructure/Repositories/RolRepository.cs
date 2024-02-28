@@ -1,26 +1,27 @@
 ﻿using Sales.Domain.Entities.Usuario.Usuario;
 using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Interfaces;
 
 namespace Sales.Infrastructure.Repositories
 {
-    public class RolRepository : IRolRepository
+    public class RolRepository : BaseRepository<Rol>, IRolRepository
     {
         private readonly SalesContext context;
 
-        public RolRepository(SalesContext context)
+        public RolRepository(SalesContext context) : base(context)
         {
             this.context = context;
         }
 
-        public void Create(Rol NewRol)
+        public override void Save(Rol NewRol)
         {
             try
             {
-                var existUser = context.Rol!.FirstOrDefault(r => r.Descripcion == NewRol.Descripcion);
+                var existRol = Exists(r => r.Descripcion == NewRol.Descripcion);
 
-                if (existUser is not null)
+                if (existRol)
                 {
                     throw new RolException("El Rol ya existe");
                 }
@@ -32,40 +33,15 @@ namespace Sales.Infrastructure.Repositories
             catch (Exception exc)
             {
 
-                throw new RolException("No se pudo crear el rol - " + exc.Message); ;
+                throw new RolException(exc.Message); ;
             }
         }
 
-        public List<Rol> GetAllRoles()
+        public override void Remove(Rol RemoveRol)
         {
             try
             {
-                return context.Rol!.Where(r => !r.Eliminado).ToList();
-            }
-            catch (Exception)
-            {
-               throw new RolException("No se pudo obtener los roles");
-            }
-        }
-
-        public Rol? GetRolById(int id)
-        {
-            try
-            {
-                return context.Rol!.Find(id);
-            }
-            catch (Exception)
-            {
-
-                throw new RolException("No se pudo obtener el rol");
-            }
-        }
-
-        public void Remove(Rol RemoveRol)
-        {
-            try
-            {
-                var rol = GetRolById(RemoveRol.Id) ?? throw new RolException("El rol no existe");
+                var rol = GetEntity(RemoveRol.Id) ?? throw new RolException("El rol no existe");
 
                 rol.Eliminado = true;
 
@@ -81,16 +57,16 @@ namespace Sales.Infrastructure.Repositories
             catch (Exception exc)
             {
 
-                throw new RolException("No se pudo eliminar el rol - " + exc.Message); ;
+                throw new RolException(exc.Message); ;
             }
 
         }
 
-        public void Update(Rol UpdateRol)
+        public override void Update(Rol UpdateRol)
         {
             try
             {
-                var rol = GetRolById(UpdateRol.Id) ?? throw new RolException("El rol no existe");
+                var rol = GetEntity(UpdateRol.Id) ?? throw new RolException("El rol no existe");
 
                 rol.Descripcion = UpdateRol.Descripcion;
                 rol.FechaMod = DateTime.Now;
@@ -103,7 +79,32 @@ namespace Sales.Infrastructure.Repositories
             catch (Exception exc)
             {
 
-                throw new RolException("No se pudo actualizar el rol - " + exc.Message); ;
+                throw new RolException(exc.Message); ;
+            }
+        }
+
+        public override List<Rol> GetEntities()
+        {
+            try
+            {
+                return FindAll(r => !r.Eliminado);
+            }
+            catch (Exception)
+            {
+               throw new RolException("No se pudo obtener los roles");
+            }
+        }
+
+        public override Rol? GetEntity(int id)
+        {
+            try
+            {
+                return context.Rol!.Find(id);
+            }
+            catch (Exception)
+            {
+
+                throw new RolException("No se pudo obtener el rol");
             }
         }
     }

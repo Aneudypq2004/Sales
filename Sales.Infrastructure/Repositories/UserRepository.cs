@@ -1,26 +1,27 @@
 ﻿using Sales.Domain.Entities.ModuloUsuario;
 using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Interfaces;
 
 namespace Sales.Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository<Usuario>,  IUserRepository
     {
         private readonly SalesContext context;
 
-        public UserRepository(SalesContext context)
+        public UserRepository(SalesContext context) : base(context)
         {
             this.context = context;
         }
 
-        public void Create(Usuario NewUser)
+        public override void Save(Usuario NewUser)
         {
             try
             {
-                var existUser = context.Usuarios!.FirstOrDefault(u => u.Correo == NewUser.Correo);
+                var existUser = Exists(u => u.Correo == NewUser.Correo);
 
-                if(existUser is not null)
+                if(existUser)
                 {
                     throw new UserException("Ya existe un usuario con este correo");
                 }
@@ -35,23 +36,38 @@ namespace Sales.Infrastructure.Repositories
             }
         }
 
-        public List<Usuario> GetAllUsers()
+        public override List<Usuario> GetEntities()
         {
             try
             {
-                return context.Usuarios!.Where(user => !user.Eliminado).ToList();
+                return FindAll(user => !user.Eliminado);
             }
             catch (Exception)
             {
-                throw new UserException("No se pudo obtener los usuarios");
+                throw new UserException("No se pudo obtener el usuario");
             }
         }
 
-        public Usuario? GetUserById(int id)
+        public Usuario? GetUserByEmail(string Email)
         {
             try
             {
-               return context.Usuarios!.Find(id);
+                return context.Usuarios!.FirstOrDefault(e => e.Correo!.Equals(Email));
+
+            }
+            catch (Exception)
+            {
+
+                throw new UserException("No se pudo obtener el usuario");
+
+            }
+        }
+
+        public override Usuario? GetEntity(int id)
+        {
+            try
+            {
+                return context.Usuarios!.Find(id);
             }
             catch (Exception exc)
             {
@@ -60,11 +76,11 @@ namespace Sales.Infrastructure.Repositories
             }
         }
 
-        public void Remove(Usuario RemoveUser)
+        public override void Remove(Usuario RemoveUser)
         {
             try
             {
-                var user = GetUserById(RemoveUser.Id) ?? throw new UserException("El usuario no existe");
+                var user = GetEntity(RemoveUser.Id) ?? throw new UserException("El usuario no existe");
 
                 user.Eliminado = true;
 
@@ -84,11 +100,11 @@ namespace Sales.Infrastructure.Repositories
             }
         }
 
-        public void Update(Usuario UpdateUser)
+        public override void Update(Usuario UpdateUser)
         {
             try
             {
-                var user = GetUserById(UpdateUser.Id) ?? throw new UserException("El usuario no existe");
+                var user = GetEntity(UpdateUser.Id) ?? throw new UserException("El usuario no existe");
 
                 user.Nombre = UpdateUser.Nombre;
                 user.NombreFoto = UpdateUser.NombreFoto;
