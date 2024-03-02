@@ -1,76 +1,83 @@
-﻿using Sales.Domain.Entities.Production;
+﻿using Microsoft.Extensions.Logging;
+using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Core;
+using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Interfaces;
 
 namespace Sales.Infrastructure.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
         private readonly SalesContext context;
+        private readonly ILogger<CategoryRepository> logger;
 
-        public CategoryRepository(SalesContext context)
+        public CategoryRepository(SalesContext context, ILogger<CategoryRepository> logger) : base(context)
         {
             this.context = context;
+            this.logger = logger;
         }
-        public void Create(Category category)
+
+        public override List<Category> GetEntities()
+        {
+
+            return base.GetEntities().Where(ca => !ca.Eliminado).ToList();
+        }
+
+        public override void Update(Category entity)
         {
             try
             {
-                context.Categoria.Add(category);
-                this.context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+                var CategoryToUpdate = this.GetEntity(entity.Id);
 
-        public Category? GetCategory(int id)
-        {
-            return context.Categoria.Find(id);
-        }
-
-        public List<Category> GetCategories()
-        {
-            return context.Categoria.Where(ca => !ca.Eliminado).ToList();
-        }
-
-        public void Remove(Category category)
-        {
-            try
-            {
-                var CategoryToRemove = this.GetCategory(category.Id);
-
-                CategoryToRemove.Eliminado = true;
-                CategoryToRemove.FechaElimino = category.FechaElimino;
-                CategoryToRemove.IdUsuarioElimino = category.IdUsuarioElimino;
-
-                this.context.Categoria.Update(CategoryToRemove);
-                this.context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public void Update(Category category)
-        {
-            try
-            {
-                var CategoryToUpdate = this.GetCategory(category.Id);
-
-                CategoryToUpdate.Id = category.Id;
-                CategoryToUpdate.Descripcion = category.Descripcion;
-                CategoryToUpdate.IdUsuarioMod = category.IdUsuarioMod;
-                CategoryToUpdate.FechaMod = category.FechaMod;
+                CategoryToUpdate.Id = entity.Id;
+                CategoryToUpdate.Descripcion = entity.Descripcion;
+                CategoryToUpdate.IdUsuarioMod = entity.IdUsuarioMod;
+                CategoryToUpdate.FechaMod = entity.FechaMod;
 
                 context.Categoria.Update(CategoryToUpdate);
                 context.SaveChanges();
             }
             catch (Exception ex)
             {
-                throw ex;
+                logger.LogError("Error actualizando la categoria", ex.ToString());
+            }
+        }
+
+        public override void Save(Category entity)
+        {
+            try
+            {
+                if (context.Categoria.Any(ca => ca.Id == entity.Id))
+                    throw new CategoryException("La categoria se encuentra registrada.");
+
+                context.Categoria.Add(entity);
+                this.context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                logger.LogError("Error guardando la categoria", ex.ToString()); ;
+            }
+        }
+
+        public override void Remove(Category entity)
+        {
+            try
+            {
+                var CategoryToRemove = this.GetEntity(entity.Id);
+
+                CategoryToRemove.Eliminado = true;
+                CategoryToRemove.FechaElimino = entity.FechaElimino;
+                CategoryToRemove.IdUsuarioElimino = entity.IdUsuarioElimino;
+
+                context.Categoria.Update(CategoryToRemove);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                logger.LogError("Error eliminando la categoria", ex.ToString());
             }
         }
     }

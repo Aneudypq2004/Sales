@@ -1,13 +1,11 @@
 ﻿using Sales.Domain.Entities.Production;
+using Sales.Domain.Repository;
+using Sales.Infrastructure.Model;
 
 namespace Sales.Infrastructure.Interfaces
 {
-    public interface IProductRepository
+    public interface IProductRepository : IBaseRepository<Product>
     {
-        void Create(Product product);
-        void Update(Product product);
-        void Remove(Product product);
-        List<Product> GetProducts();
-        Product? GetProduct(int id);
+        List<ProductModel> GetProductsByCategory(int categoryId);
     }
 }
