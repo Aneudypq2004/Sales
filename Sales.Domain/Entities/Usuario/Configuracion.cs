@@ -2,7 +2,7 @@
 {
     public class Configuracion
     {
-        public int Id { get; set; }
+        public short Id { get; set; }
 
         public string? Recurso { get; set; }
 

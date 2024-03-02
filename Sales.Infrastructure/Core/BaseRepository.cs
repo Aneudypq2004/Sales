@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Sales.Domain.Entities.ModuloUsuario;
 using Sales.Domain.Repository;
 using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Services;
 
 namespace Sales.Infrastructure.Core
 {
@@ -9,7 +12,7 @@ namespace Sales.Infrastructure.Core
         private readonly SalesContext context;
         private readonly DbSet<TEntity> DBEntity;
 
-        public BaseRepository(SalesContext context)
+        public BaseRepository(SalesContext context) 
         {
             this.context = context;
 
