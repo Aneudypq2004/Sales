@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Sales.Domain.Entities.Production;
+﻿using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
@@ -11,9 +10,9 @@ namespace Sales.Infrastructure.Repositories
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         private readonly SalesContext context;
-        private readonly Microsoft.Extensions.Logging.ILogger<ProductRepository> logger;
+        private readonly Interfaces.ILogger<ProductRepository> logger;
 
-        public ProductRepository(SalesContext context, Microsoft.Extensions.Logging.ILogger<ProductRepository> logger) : base(context)
+        public ProductRepository(SalesContext context, Interfaces.ILogger<ProductRepository> logger) : base(context)
         {
             this.context = context;
             this.logger = logger;
@@ -26,23 +25,24 @@ namespace Sales.Infrastructure.Repositories
             try
             {
                 var query = (from pro in this.context.Producto
-                            join ca in context.Categoria on pro.IdCategoria equals ca.Id
-                            where pro.IdCategoria == categoryId
-                            select new ProductModel() {
-                            IdCategory = ca.Id,
-                            CodigoDeBarra = pro.CodigoBarra,
-                            Marca = pro.Marca,
-                            Descripcion = pro.Descripcion,
-                            Stock = pro.Stock,
-                            UrlImagen = pro.UrlImagen,
-                            NombreImagen = pro.NombreImagen,
-                            Precio = pro.Precio
-                            }).ToList();
+                             join ca in context.Categoria on pro.IdCategoria equals ca.Id
+                             where pro.IdCategoria == categoryId
+                             select new ProductModel()
+                             {
+                                 IdCategory = ca.Id,
+                                 CodigoDeBarra = pro.CodigoBarra,
+                                 Marca = pro.Marca,
+                                 Descripcion = pro.Descripcion,
+                                 Stock = pro.Stock,
+                                 UrlImagen = pro.UrlImagen,
+                                 NombreImagen = pro.NombreImagen,
+                                 Precio = pro.Precio
+                             }).ToList();
             }
-            catch (Exception ex)
+            catch (ProductException exc)
             {
 
-                logger.LogError("Error obteniendo los productos", ex.ToString());
+                logger.LogError("Error obteniendo los productos", exc);
             }
 
             return products;
@@ -68,9 +68,9 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Update(ProductToUpdate);
                 context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (ProductException exc)
             {
-                logger.LogError("Error actualizando el producto", ex.ToString());
+                logger.LogError("Error actualizando el producto", exc);
             }
         }
 
@@ -84,10 +84,10 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (ProductException exc)
             {
 
-                logger.LogError("Error guardando el producto", ex.ToString()); ;
+                logger.LogError("Error guardando el producto", exc); ;
             }
         }
 
@@ -104,10 +104,10 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Update(ProductToRemove);
                 context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (ProductException exc)
             {
 
-                logger.LogError("Error eliminando el producto", ex.ToString());
+                logger.LogError("Error eliminando el producto", exc);
             }
         }
     }

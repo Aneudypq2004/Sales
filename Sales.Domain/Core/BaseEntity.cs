@@ -2,6 +2,7 @@
 {
     public abstract class BaseEntity
     {
+
         public bool EsActivo { get; set; }
 
         public DateTime FechaRegistro { get; set; }
@@ -11,7 +12,7 @@
         public DateTime? FechaMod { get; set; }
 
         public int? IdUsuarioMod { get; set; }
-        
+
         public int? IdUsuarioElimino { get; set; }
 
         public DateTime? FechaElimino { get; set; }

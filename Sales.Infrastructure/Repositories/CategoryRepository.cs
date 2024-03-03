@@ -11,7 +11,7 @@ namespace Sales.Infrastructure.Repositories
         private readonly SalesContext context;
         private readonly Interfaces.ILogger<CategoryRepository> logger;
 
-        public CategoryRepository(SalesContext context, Interfaces.ILogger<CategoryRepository> logger) : base(context)
+        public CategoryRepository(SalesContext context, ILogger<CategoryRepository> logger) : base(context)
         {
             this.context = context;
             this.logger = logger;
@@ -39,7 +39,7 @@ namespace Sales.Infrastructure.Repositories
             }
             catch (CategoryException exc)
             {
-                logger.LogError(message: "Error al obtener la categoria.", exc);
+                logger.LogError("Error actualizando la categoria", exc);
             }
         }
 
