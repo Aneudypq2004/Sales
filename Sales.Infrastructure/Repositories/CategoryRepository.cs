@@ -1,4 +1,5 @@
-﻿using Sales.Domain.Entities.Production;
+﻿using Microsoft.Extensions.Logging;
+using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
@@ -9,7 +10,7 @@ namespace Sales.Infrastructure.Repositories
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
         private readonly SalesContext context;
-        private readonly Interfaces.ILogger<CategoryRepository> logger;
+        private readonly ILogger<CategoryRepository> logger;
 
         public CategoryRepository(SalesContext context, ILogger<CategoryRepository> logger) : base(context)
         {
@@ -37,9 +38,9 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Update(CategoryToUpdate);
                 context.SaveChanges();
             }
-            catch (CategoryException exc)
+            catch (Exception exc)
             {
-                logger.LogError("Error actualizando la categoria", exc);
+                logger.LogError("Error al actualizar la categoria", exc);
             }
         }
 
@@ -53,7 +54,7 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (CategoryException exc)
+            catch (Exception exc)
             {
 
                 logger.LogError("No fue posible guardar la categoria", exc); ;
@@ -73,7 +74,7 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Update(CategoryToRemove);
                 context.SaveChanges();
             }
-            catch (CategoryException exc)
+            catch (Exception exc)
             {
 
                 logger.LogError("No fue posible eliminar la categoria", exc);

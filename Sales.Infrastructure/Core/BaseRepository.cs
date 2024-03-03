@@ -10,7 +10,7 @@ namespace Sales.Infrastructure.Core
 
         private readonly DbSet<TEntity> DbEntity;
 
-        protected BaseRepository(SalesContext context)
+        public BaseRepository(SalesContext context)
         {
             this.context = context;
             this.DbEntity = context.Set<TEntity>();

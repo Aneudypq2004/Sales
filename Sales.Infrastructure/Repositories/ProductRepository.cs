@@ -1,4 +1,5 @@
-﻿using Sales.Domain.Entities.Production;
+﻿using Microsoft.Extensions.Logging;
+using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
@@ -10,9 +11,9 @@ namespace Sales.Infrastructure.Repositories
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         private readonly SalesContext context;
-        private readonly Interfaces.ILogger<ProductRepository> logger;
+        private readonly ILogger<ProductRepository> logger;
 
-        public ProductRepository(SalesContext context, Interfaces.ILogger<ProductRepository> logger) : base(context)
+        public ProductRepository(SalesContext context, ILogger<ProductRepository> logger) : base(context)
         {
             this.context = context;
             this.logger = logger;
@@ -39,7 +40,7 @@ namespace Sales.Infrastructure.Repositories
                                  Precio = pro.Precio
                              }).ToList();
             }
-            catch (ProductException exc)
+            catch (Exception exc)
             {
 
                 logger.LogError("Error obteniendo los productos", exc);
@@ -68,7 +69,7 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Update(ProductToUpdate);
                 context.SaveChanges();
             }
-            catch (ProductException exc)
+            catch (Exception exc)
             {
                 logger.LogError("Error actualizando el producto", exc);
             }
@@ -84,7 +85,7 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (ProductException exc)
+            catch (Exception exc)
             {
 
                 logger.LogError("Error guardando el producto", exc); ;
@@ -104,7 +105,7 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Update(ProductToRemove);
                 context.SaveChanges();
             }
-            catch (ProductException exc)
+            catch (Exception exc)
             {
 
                 logger.LogError("Error eliminando el producto", exc);
