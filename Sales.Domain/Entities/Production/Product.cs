@@ -5,6 +5,7 @@ namespace Sales.Domain.Entities.Production
 {
     public class Product : BaseEntity
     {
+        public int Id { get; set; }
         public string? CodigoBarra { get; set; }
         public string? Marca { get; set; }
         public string? Descripcion { get; set; }

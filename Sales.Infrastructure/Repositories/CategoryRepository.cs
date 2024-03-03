@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Sales.Domain.Entities.Production;
+﻿using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
@@ -10,9 +9,9 @@ namespace Sales.Infrastructure.Repositories
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
         private readonly SalesContext context;
-        private readonly ILogger<CategoryRepository> logger;
+        private readonly Interfaces.ILogger<CategoryRepository> logger;
 
-        public CategoryRepository(SalesContext context, ILogger<CategoryRepository> logger) : base(context)
+        public CategoryRepository(SalesContext context, Interfaces.ILogger<CategoryRepository> logger) : base(context)
         {
             this.context = context;
             this.logger = logger;
@@ -38,9 +37,9 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Update(CategoryToUpdate);
                 context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (CategoryException exc)
             {
-                logger.LogError("Error actualizando la categoria", ex.ToString());
+                logger.LogError(message: "Error al obtener la categoria.", exc);
             }
         }
 
@@ -54,10 +53,10 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (CategoryException exc)
             {
 
-                logger.LogError("Error guardando la categoria", ex.ToString()); ;
+                logger.LogError("No fue posible guardar la categoria", exc); ;
             }
         }
 
@@ -74,10 +73,10 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Update(CategoryToRemove);
                 context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (CategoryException exc)
             {
 
-                logger.LogError("Error eliminando la categoria", ex.ToString());
+                logger.LogError("No fue posible eliminar la categoria", exc);
             }
         }
     }

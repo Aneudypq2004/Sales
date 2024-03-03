@@ -11,9 +11,9 @@ namespace Sales.Infrastructure.Repositories
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         private readonly SalesContext context;
-        private readonly ILogger<ProductRepository> logger;
+        private readonly Microsoft.Extensions.Logging.ILogger<ProductRepository> logger;
 
-        protected ProductRepository(SalesContext context, ILogger<ProductRepository> logger) : base(context)
+        public ProductRepository(SalesContext context, Microsoft.Extensions.Logging.ILogger<ProductRepository> logger) : base(context)
         {
             this.context = context;
             this.logger = logger;
