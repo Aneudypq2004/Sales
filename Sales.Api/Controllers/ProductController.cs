@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Models;
+using Sales.Api.Dtos.Product;
+using Sales.Api.Models.Product;
+using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Interfaces;
-using Sales.Infrastructure.Repositories;
 
 
 namespace Sales.Api.Controllers
@@ -20,7 +21,13 @@ namespace Sales.Api.Controllers
         [HttpGet("GetProducts")]
         public IActionResult Get()
         {
-            var products = productRepository.GetEntities();
+            var products = productRepository.GetEntities().Select(cd => new ProductGetModel()
+            {
+                Id = cd.Id,
+                Descripcion = cd.Descripcion,
+                FechaRegistro = cd.FechaRegistro
+            });
+
             return Ok(products);
         }
 
@@ -30,13 +37,20 @@ namespace Sales.Api.Controllers
         public IActionResult Get(int id)
         {
             var product = productRepository.GetEntity(id);
-            return Ok(product);
+
+            ProductGetModel productGetModel = new ProductGetModel()
+            {
+                Id = product.Id,
+                Descripcion = product.Descripcion,
+                FechaRegistro = product.FechaRegistro
+            };
+
+            return Ok(productGetModel);
         }
 
 
-        // POST api/<ProductController>
         [HttpPost("SaveProduct")]
-        public void Post([FromBody] ProductAddModel productAddModel)
+        public void Post([FromBody] ProductAddDto productAddModel)
         {
             productRepository.Save(new Domain.Entities.Production.Product()
             {
@@ -48,20 +62,36 @@ namespace Sales.Api.Controllers
                 Stock = productAddModel.Stock,
                 UrlImagen = productAddModel.UrlImagen,
                 NombreImagen = productAddModel.NombreImagen,
-                Precio = productAddModel.Precio
+                Precio = productAddModel.Precio,
+                FechaRegistro = productAddModel.FechaRegistro,
             });
         }
 
-        // PUT api/<ProductController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("UpdateProduct")]
+        public IActionResult Put([FromBody] ProductUpdateDto productUpdate)
         {
+            productRepository.Update(new Product()
+            {
+                Id = productUpdate.Id,
+                FechaMod = productUpdate.ChangeDate,
+                IdUsuarioMod = productUpdate.UserId,
+                Descripcion = productUpdate.Descripcion,
+            });
+
+            return Ok("Producto actualizado correctamente.");
         }
 
-        // DELETE api/<ProductController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("RemoveProduct")]
+        public IActionResult Remove([FromBody] ProductRemoveDto productRemove)
         {
+            productRepository.Remove(new Product()
+            {
+                Id = productRemove.Id,
+                FechaElimino = productRemove.ChangeDate,
+                IdUsuarioElimino = productRemove.UserId
+            });
+
+            return Ok("Producto eliminado correctamente.");
         }
     }
 }

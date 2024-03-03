@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Models;
+using Sales.Api.Dtos.Category;
+using Sales.Api.Models.Category;
+using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Interfaces;
 
 
@@ -19,7 +21,13 @@ namespace Sales.Api.Controllers
         [HttpGet("GetCategories")]
         public IActionResult Get()
         {
-            var categories = categoryRepository.GetEntities();
+            var categories = categoryRepository.GetEntities().Select(cd => new CategoryGetModel()
+            {
+                Id = cd.Id,
+                Description = cd.Descripcion,
+                FechaRegistro = cd.FechaRegistro
+            });
+
             return Ok(categories);
         }
 
@@ -29,32 +37,60 @@ namespace Sales.Api.Controllers
         public IActionResult Get(int id)
         {
             var category = categoryRepository.GetEntity(id);
-            return Ok(category);
+
+            CategoryGetModel categoryGetModel = new CategoryGetModel()
+            {
+                Id = category.Id,
+                Description = category.Descripcion,
+                FechaRegistro = category.FechaRegistro
+            };
+
+            return Ok(categoryGetModel);
         }
 
 
         
         [HttpPost("SaveProduct")]
-        public void Post([FromBody] CategoryAddModel categoryAddModel)
+        public IActionResult Post([FromBody] CategoryAddDto categoryAddModel)
         {
             categoryRepository.Save(new Domain.Entities.Production.Category()
             {
+                FechaRegistro = categoryAddModel.ChangeDate,
+                IdUsuarioCreacion = categoryAddModel.UserId,
                 Descripcion = categoryAddModel.Descripcion
             });
+
+            return Ok("Categoria guardada correctamente.");
+
         }
 
-        // we have to change to HttpPost and also we manage 
 
-        // PUT api/<ProductController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("UpdateCategory")]
+        public IActionResult Put([FromBody] CategoryUpdateDto categoryUpdte)
         {
+            this.categoryRepository.Update(new Category()
+            {
+                Id = categoryUpdte.Id,
+                FechaMod = categoryUpdte.ChangeDate,
+                IdUsuarioMod = categoryUpdte.UserId,
+                Descripcion = categoryUpdte.Descripcion,
+            });
+
+            return Ok("Categoria actualizada correctamente.");
         }
+        
 
-        // DELETE api/<ProductController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("RemoveCategory")]
+        public IActionResult Remove([FromBody] CategoryRemoveDto categoryRemove)
         {
+            this.categoryRepository.Remove(new Category()
+            {
+                Id = categoryRemove.Id,
+                FechaElimino = categoryRemove.ChangeDate,
+                IdUsuarioElimino = categoryRemove.UserId
+            });
+
+            return Ok("Categoria eliminada correctamente.");
         }
     }
 }

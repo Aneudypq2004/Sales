@@ -1,9 +1,10 @@
-﻿namespace Sales.Api.Models
+﻿namespace Sales.Api.Dtos.Category
 {
-    public class CategoryAddModel
+    public class CategoryUpdateDto : DtoBase
     {
         public int Id { get; set; }
         public string? Descripcion { get; set; }
+
 
     }
 }

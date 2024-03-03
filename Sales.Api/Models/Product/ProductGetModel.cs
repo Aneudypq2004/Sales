@@ -1,6 +1,6 @@
-﻿namespace Sales.Api.Models
+﻿namespace Sales.Api.Models.Product
 {
-    public class ProductAddModel
+    public class ProductGetModel
     {
         public int Id { get; set; }
         public string? CodigoDeBarra { get; set; }
@@ -11,5 +11,7 @@
         public string? UrlImagen { get; set; }
         public string? NombreImagen { get; set; }
         public decimal? Precio { get; set; }
+        public DateTime FechaRegistro { get; set; }
+
     }
 }
