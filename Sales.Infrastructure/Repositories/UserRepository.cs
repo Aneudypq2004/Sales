@@ -26,7 +26,7 @@ namespace Sales.Infrastructure.Repositories
                     throw new UserException("Ya existe un usuario con este correo");
                 }
 
-                context.Usuarios!.Add(NewUser);
+                context.Usuario!.Add(NewUser);
 
                 context.SaveChangesAsync();
             }
@@ -52,7 +52,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                return context.Usuarios!.FirstOrDefault(e => e.Correo!.Equals(Email));
+                return context.Usuario!.FirstOrDefault(e => e.Correo!.Equals(Email));
 
             }
             catch (Exception)
@@ -67,7 +67,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                return context.Usuarios!.Find(id);
+                return context.Usuario!.Find(id);
             }
             catch (Exception exc)
             {
@@ -88,7 +88,7 @@ namespace Sales.Infrastructure.Repositories
 
                 user.FechaElimino = RemoveUser.FechaElimino;
 
-                context.Usuarios!.Update(user);
+                context.Usuario!.Update(user);
 
                 context.SaveChangesAsync();
 
@@ -111,7 +111,7 @@ namespace Sales.Infrastructure.Repositories
                 user.FechaMod = DateTime.Now;
                 user.IdUsuarioMod = UpdateUser.IdUsuarioMod;
     
-                context.Usuarios!.Update(user);
+                context.Usuario!.Update(user);
 
                 context.SaveChangesAsync();
 

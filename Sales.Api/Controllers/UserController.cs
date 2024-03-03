@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sales.Api.Dtos.User;
+using Sales.Api.Models;
 using Sales.Domain.Entities.ModuloUsuario;
-using Sales.Domain.Entities.Usuario.Usuario;
 using Sales.Infrastructure.Interfaces;
-using Sales.Infrastructure.Model;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Sales.Api.Controllers
 {
@@ -18,51 +17,86 @@ namespace Sales.Api.Controllers
         {
             this.repository = repository;
         }
-        [HttpGet]
+        [HttpGet("GetUsers")]
         public ActionResult Get()
         {
-            var result = repository.GetEntities();
+            var result = repository.GetEntities().Select( e => new UserGetModel()
+            {
+                Id = e.Id,
+                Nombre = e.Nombre,
+                Correo = e.Correo,
+                Telefono = e.Telefono,
+                IdRol = e.IdRol
+            });
 
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetUserById")]
         public ActionResult Get(int id)
         {
-            var result = repository.GetEntity(id);
+            var usuario = repository.GetEntity(id);
 
-            return Ok(result);
+            if (usuario is null) return BadRequest();
+
+            var usuarioGetModel = new UserGetModel()
+            {
+                Id = id,
+                Nombre = usuario.Nombre,
+                Correo = usuario.Correo,
+                Telefono = usuario.Telefono,
+                IdRol = usuario.IdRol
+            };
+
+            return Ok(usuarioGetModel);
         }
 
-        [HttpPost]
-        public ActionResult Post([FromBody] UserModel user)
+        [HttpPost("SaveUser")]
+        public ActionResult Post([FromBody] UserAddDto user)
         {
             repository.Save(new Usuario()
             {
                 
                 Nombre = user.Nombre,
-                Correo = user.Correo
-               });
+                Correo = user.Correo,
+                Telefono = user.Telefono,
+                Clave = user.Clave,
+                IdUsuarioCreacion = user.IdUsuario,
+                FechaRegistro = user.ChangeTime
 
-            return NoContent();
+             });
+
+            return Ok("Usuario registrado correctamente");
         }
 
-        [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] UserModel user)
+        [HttpPost("UpdateUser")]
+        public ActionResult Put([FromBody] UserUpdateDto user)
         {
             repository.Update(new Usuario()
             {
-                Id = id,
+                Id = user.Id,
                 Nombre = user.Nombre,
-                Correo = user.Correo
+                Correo = user.Correo,
+                Telefono = user.Telefono,
+                Clave = user.Clave,
+                IdUsuarioMod = user.IdUsuario,
+                FechaMod = user.ChangeTime
             });
 
-            return NoContent();
+            return Ok("Usuario actualizado correctaente");
         }
 
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("DeleteUser")]
+        public ActionResult Delete([FromBody] UserDeleteDto user)
         {
+            repository.Remove(new Usuario()
+            {
+                Id = user.Id,
+                FechaElimino = user.ChangeTime,
+                IdUsuarioElimino = user.IdUsuario
+            });
+
+            return Ok("Usuario eliminado correctamente");
         }
     }
 }

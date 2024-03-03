@@ -11,7 +11,7 @@ namespace Sales.Infrastructure.Context
             
         }
 
-        public DbSet<Usuario>? Usuarios { get; set; }
+        public DbSet<Usuario>? Usuario { get; set; }
         public DbSet<Configuracion>? Configuracion { get; set; }
 
         public DbSet<Rol>? Rol { get; set; }

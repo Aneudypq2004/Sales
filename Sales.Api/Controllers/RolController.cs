@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sales.Api.Dtos.Rol;
+using Sales.Api.Models;
 using Sales.Domain.Entities.Usuario.Usuario;
 using Sales.Infrastructure.Interfaces;
-using Sales.Infrastructure.Model;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Sales.Api.Controllers
 {
@@ -17,47 +17,72 @@ namespace Sales.Api.Controllers
         {
             this.repository = repository;
         }
-        [HttpGet]
+        [HttpGet("GetRoles")]
         public ActionResult Get()
         {
-            var result = repository.GetEntities();
+            var result = repository.GetEntities().Select(e => new RolGetModel()
+            {
+                Descripcion = e.Descripcion
+            });
 
             return Ok(result);
         }
 
-        // GET api/<RolController>/5
-        [HttpGet("{id}")]
+        [HttpGet("GetRolById")]
         public ActionResult Get(int id)
         {
-            var result = repository.GetEntity(id);
+            var rol = repository.GetEntity(id);
 
-            return Ok(result);
+            if (rol is null) return BadRequest();
+
+            var rolGetModel = new RolGetModel()
+            {
+                Descripcion = rol.Descripcion
+            };
+
+            return Ok(rolGetModel);
         }
 
-        // POST api/<RolController>
-        [HttpPost]
-        public ActionResult Post([FromBody] RolModel rol)
+        [HttpPost("SaveRol")]
+        public ActionResult Post([FromBody] RolAddDto rol)
         {
             repository.Save(new Rol()
             {
-                Descripcion = rol.Descripcion
-
+                Descripcion = rol.Descripcion,
+                FechaRegistro = rol.ChangeTime,
+                IdUsuarioCreacion = rol.IdUsuario
             });
 
-            return NoContent();
+            return Ok("Rol registrado correctamente");
         }
 
-        // PUT api/<RolController>/5
-        [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] RolModel rol)
+        [HttpPost("UpdateRol")]
+        public ActionResult Put([FromBody] RolUpdateDto rol)
         {
             repository.Update(new Rol
             {
                 Descripcion = rol.Descripcion,
-                Id = id
+                Id = rol.Id,
+                FechaMod = rol.ChangeTime,
+                IdUsuarioMod = rol.IdUsuario
             });
 
-            return NoContent();
+            return Ok("Rol actualizado correctamente");
         }
+
+
+        [HttpPost("DeleteRol")]
+        public ActionResult Delete([FromBody] RolDeleteDto rol)
+        {
+            repository.Remove(new Rol()
+            {
+                Id = rol.Id,
+                FechaElimino = rol.ChangeTime,
+                IdUsuarioElimino = rol.IdUsuario
+            });
+
+            return Ok("Rol eliminado correctamente");
+        }
+
     }
 }
