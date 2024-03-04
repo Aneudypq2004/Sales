@@ -1,6 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using Sales.Infrastructure.Context;
+using Sales.Infrastructure.Interface;
+using Sales.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContext<SalesContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("SalesContext")));
+
+builder.Services.AddScoped<INegocioRepository,NegocioRepocitory>();
+builder.Services.AddScoped<INumeroCorrelativoRepository,NumeroCorrelativoRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

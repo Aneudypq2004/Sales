@@ -1,7 +1,10 @@
-﻿namespace Sales.Domain.Core
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Sales.Domain.Core
 {
     public abstract class BaseEntity
     {
+        [Key]
         public int Id { get; set; }
 
         public bool EsActivo { get; set; }
