@@ -23,7 +23,7 @@ namespace Sales.Infrastructure.Repositories
 
         public override List<TipoDocumentoVenta> GetEntities()
         {
-            return base.GetEntities().Where(TipoDocumentoVenta => !TipoDocumentoVenta.Eliminado).ToList(); 
+            return base.GetEntities().Where(tpdv => !tpdv.Eliminado).ToList(); 
             
         }
 

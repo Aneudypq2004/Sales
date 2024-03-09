@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Models;
 using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Inteface;
 
@@ -13,7 +12,7 @@ namespace Sales.Api.Controllers
     {
         private ITipoDocumentoVentaRepository tipoDocumentoVentaRepository;
 
-        TipoDocumentoVentaController(ITipoDocumentoVentaRepository tipoDocumentoVentaRepository)
+        public TipoDocumentoVentaController(ITipoDocumentoVentaRepository tipoDocumentoVentaRepository)
         {
             this.tipoDocumentoVentaRepository = tipoDocumentoVentaRepository;
         }
@@ -55,7 +54,8 @@ namespace Sales.Api.Controllers
         {
             this.tipoDocumentoVentaRepository.Update(
                 new TipoDocumentoVenta()
-                {
+                {  
+                    Id = tipoDocumentoVentaUpdateModel.Id,
                     Descripcion = tipoDocumentoVentaUpdateModel.Descripcion,
                     EsActivo = tipoDocumentoVentaUpdateModel.EsActivo,
                     Eliminado = tipoDocumentoVentaUpdateModel.Eliminado
