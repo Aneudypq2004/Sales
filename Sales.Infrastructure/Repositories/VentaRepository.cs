@@ -1,5 +1,4 @@
-﻿
-
+﻿using Microsoft.Extensions.Logging;
 using Sales.Domain.Entities;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
@@ -11,15 +10,17 @@ namespace Sales.Infrastructure.Repositories
     public class VentaRepository : BaseRepository<Venta>, IVentaRepository
     {
         private readonly SalesContext context;
+        private readonly ILogger<VentaRepository> logger;
 
-        public VentaRepository(SalesContext context) : base(context){ 
+        public VentaRepository(SalesContext context, ILogger<VentaRepository> logger) : base(context){ 
             
             this.context = context;
+            this.logger = logger; 
         }
 
         public override List<Venta> GetEntities()
         {
-            return base.GetEntities().Where(venta => !venta.Eliminado)
+            return base.GetEntities()
                         .ToList();
         }
 
@@ -27,16 +28,16 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                if (context.Ventas.Any(venta => venta.NumeroVenta == venta.NumeroVenta))
+                if (context.Venta!.Any(venta => venta.NumeroVenta == venta.NumeroVenta))
 
                     throw new VentaException("Este numero de venta ya se encuentra registrado");
 
-                this.context.Ventas.Add(entity);
+                this.context.Venta!.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new DetalleVentaException(ex.Message); ;
+                this.logger.LogError("Error creando la venta");
             }
         }
 
@@ -44,19 +45,14 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                var ventaToRemove = this.GetEntity(entity.Id) ?? throw new TipoDocumentoVentaException("Este tipo de Documento de Venta ya existe");
+                var ventaToRemove = this.GetEntity(entity.Id) ?? throw new VentaException("Este tipo de Documento de Venta ya existe");
 
-                ventaToRemove.Eliminado = true;
-                ventaToRemove.FechaElimino = entity.FechaElimino;
-                ventaToRemove.IdUsuarioElimino = entity.IdUsuarioElimino;
-
-                this.context.Ventas.Update(ventaToRemove);
+                this.context.Venta!.Remove(ventaToRemove);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw new DetalleVentaException(ex.Message);
+                this.logger.LogError("Error eliminando esta la venta");
             }
         }
 
@@ -64,7 +60,8 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                var ventaToUpdate = this.GetEntity(entity.Id);
+                var ventaToUpdate = this.GetEntity(entity.Id)?? throw new 
+                VentaException("Este tipo de Documento de Venta ya existe");
 
                 ventaToUpdate!.NombreCliente = entity.NombreCliente;
                 ventaToUpdate.CocumentoCliente = entity.CocumentoCliente;
@@ -72,13 +69,19 @@ namespace Sales.Infrastructure.Repositories
                 ventaToUpdate.ImpuestoTotal = entity.ImpuestoTotal;
                 ventaToUpdate.Total = entity.Total;
 
-                this.context.Ventas.Update(ventaToUpdate);
+                this.context.Venta!.Update(ventaToUpdate);
                 this.context.SaveChanges();
 
             }
-            catch (Exception ex){
-                throw new DetalleVentaException(ex.Message);
+            catch (Exception){
+                this.logger.LogError("Error actualizando la venta");
             }
+        }
+
+        public List<Venta> GetVentasbyTipoDocumentoVenta(int IdTipoDocumentoVenta)
+        {   
+
+            return context.Venta!.Where(v => v.IdTipoDocumentoVenta.Equals(IdTipoDocumentoVenta)).ToList();
         }
     }
 }

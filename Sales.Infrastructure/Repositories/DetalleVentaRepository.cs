@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
@@ -11,50 +10,58 @@ namespace Sales.Infrastructure.Repositories
     public class DetalleVentaRepository : BaseRepository<DetalleVenta>, IDetalleVentaRepository
     {
         private readonly SalesContext context;
-        public DetalleVentaRepository(SalesContext context) : base(context)
+
+        private readonly ILogger<DetalleVentaRepository> logger;
+        public DetalleVentaRepository(SalesContext context, ILogger<DetalleVentaRepository> logger) : base(context)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         public override List<DetalleVenta> GetEntities()
         {
-            return base.GetEntities().Where(detalleVenta =>!detalleVenta.Eliminado).ToList();
+            return context.DetalleVenta!.ToList();
+
+            /*Preguntar por esta parte
+             * try
+            {
+                return context.DetalleVenta!.ToList();
+            }
+            catch (Exception)
+            {
+                this.logger.LogError("Error creando el detalle de venta");
+            }*/
         }
         public override void Save(DetalleVenta entity)
         {
             try
             {
-                if (context.DetalleVentas.Any(detalleVenta => detalleVenta.CategoriaProducto == detalleVenta.CategoriaProducto))
+                if (context.DetalleVenta!.Any(detalleVenta => detalleVenta.CategoriaProducto == detalleVenta.CategoriaProducto))
 
                     throw new DetalleVentaException("Esta Categoria de venta ya se encuentra registrada");
                 
-                this.context.DetalleVentas.Add(entity);
+                this.context.DetalleVenta!.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new DetalleVentaException(ex.Message);
+                this.logger.LogError("Error creando el detalle de venta");
             }
         }
 
         public override void Remove(DetalleVenta entity)
-        {
+        {   
             try
             {
                 var detalleVentaToRemove = this.GetEntity(entity.Id)?? throw new DetalleVentaException("Este detalle de venta no se puede eliminar porque no existe") ;
 
-                detalleVentaToRemove.Eliminado = true;
-                detalleVentaToRemove.FechaElimino = entity.FechaElimino;
-                detalleVentaToRemove.IdUsuarioElimino = entity.IdUsuarioElimino;
-
-                this.context.DetalleVentas?.Update(entity);
+                this.context.DetalleVenta!.Update(entity);
                 this.context.SaveChanges();
 
-
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new DetalleVentaException(ex.Message); ;
+                this.logger.LogError("Error eliminando el detalle de venta");
             }
         }
 
@@ -72,17 +79,27 @@ namespace Sales.Infrastructure.Repositories
                 detalleVentaToUpdate.Total = entity.Total;
                 
                 
-                this.context.DetalleVentas.Update(detalleVentaToUpdate);
+                this.context.DetalleVenta!.Update(detalleVentaToUpdate);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new DetalleVentaException(ex.Message);
+                this.logger.LogError("Error actualizando el detalle de venta");
             }
         }
 
-        
+        public List<DetalleVenta> GetDetalleVentaModelByVenta(int IdVenta)
+        {
+            //List<DetalleVenta> ventas = new List<DetalleVenta>();
 
+            return context.DetalleVenta!.Where(dv => dv.IdVenta.Equals(IdVenta)).ToList();
+
+        }
+
+        public List<DetalleVenta> GetDetalleVentaModelByProducto(int IdProducto)
+        {
+            return context.DetalleVenta!.Where(dv => dv.IdProducto.Equals(IdProducto)).ToList();
+        }
     }
 
 }

@@ -9,7 +9,7 @@ namespace Sales.Infrastructure.Inteface
     public interface ITipoDocumentoVentaRepository: IBaseRepository<TipoDocumentoVenta>
 
     {
-        //List<TipoDocumentoVentaModel> GetTipoDocumentoVentaById(int Id);
+        List<TipoDocumentoVenta> GetTipoDocumentoVentaById(int Id);
 
     }
 }

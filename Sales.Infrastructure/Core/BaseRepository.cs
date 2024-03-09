@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Sales.Domain.Repository;
 using Sales.Infrastructure.Context;
 
+
 namespace Sales.Infrastructure.Core
 {
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly SalesContext context;
-
         private readonly DbSet<TEntity> DbEntity;
 
         public BaseRepository(SalesContext context)
@@ -41,17 +41,10 @@ namespace Sales.Infrastructure.Core
 
         public virtual void Save(TEntity entity)
         {
-            try
-            {
+            
                 DbEntity.Add(entity);
                 context.SaveChanges();
-            }
-            catch (Exception) {
-
-                throw;
-
-            }
-            
+           
         }
 
         public virtual void Remove(TEntity entity)

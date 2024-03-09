@@ -1,10 +1,12 @@
 ﻿using Sales.Domain.Core;
 namespace Sales.Domain.Entities.ModuloVentas
 {
-    public class DetalleVenta : BaseEntity
+    public class DetalleVenta  
     {
-        public int IdVenta { get; set; }
-        public int IdProducto { get; set;}
+        public int Id { get; set; }
+
+        public int? IdVenta { get; set; }
+        public int? IdProducto { get; set;}
 
         public string? MarcaProducto { get; set;}
 
@@ -16,6 +18,7 @@ namespace Sales.Domain.Entities.ModuloVentas
 
         public decimal? Precio { get; set;}
 
+        public decimal? Total { get; set; }
 
     }
 }

@@ -10,9 +10,9 @@ namespace Sales.Infrastructure.Context
         public SalesContext(DbContextOptions<SalesContext>options): base(options) { 
         }
 
-        public DbSet<Venta> Ventas {  get; set; }
-        public DbSet<DetalleVenta>DetalleVentas { get; set; }
-        public DbSet<TipoDocumentoVenta> TipoDocumentoVentas { get; set; }
+        public DbSet<Venta>? Venta {  get; set; }
+        public DbSet<DetalleVenta>?DetalleVenta { get; set; }
+        public DbSet<TipoDocumentoVenta>? TipoDocumentoVenta { get; set; }
 
     }
 }

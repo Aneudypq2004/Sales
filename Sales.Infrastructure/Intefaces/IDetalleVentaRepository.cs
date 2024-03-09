@@ -6,7 +6,8 @@ namespace Sales.Infrastructure.Inteface
 {
     public interface IDetalleVentaRepository: IBaseRepository <DetalleVenta>
     {
-        //List<DetalleVentaModel> GetDetalleVentaModelByVenta(int IdVenta);
-        //List<DetalleVentaModel> GetDetalleVentaModelByProducto(int IdProducto);
+        List<DetalleVenta> GetDetalleVentaModelByVenta(int IdVenta);
+        List<DetalleVenta> GetDetalleVentaModelByProducto(int IdProducto);
+   
     }
 }
