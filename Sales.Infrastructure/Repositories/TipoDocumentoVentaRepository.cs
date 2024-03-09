@@ -1,8 +1,10 @@
-﻿using Sales.Domain.Entities.ModuloVentas;
+﻿using Microsoft.Extensions.Logging;
+using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Inteface;
+
 
 
 namespace Sales.Infrastructure.Repositories
@@ -10,31 +12,35 @@ namespace Sales.Infrastructure.Repositories
     public class TipoDocumentoVentaRepository : BaseRepository<TipoDocumentoVenta>, ITipoDocumentoVentaRepository
     {
         private readonly SalesContext context;
+        private readonly ILogger<TipoDocumentoVentaRepository> logger;
 
-        public TipoDocumentoVentaRepository(SalesContext context) :base (context) {
+        public TipoDocumentoVentaRepository(SalesContext context, ILogger<TipoDocumentoVentaRepository> logger) :base (context) {
             
             this.context = context;
+            this.logger = logger;
+            
         }
 
         public override List<TipoDocumentoVenta> GetEntities()
         {
-            return base.GetEntities().Where(TipoDocumentoVenta => !TipoDocumentoVenta.Eliminado).ToList(); ;
+            return base.GetEntities().Where(TipoDocumentoVenta => !TipoDocumentoVenta.Eliminado).ToList(); 
+            
         }
 
         public override void Save(TipoDocumentoVenta entity)
         {
             try
             {
-                if (context.TipoDocumentoVentas.Any(tipoDocumentoVenta => tipoDocumentoVenta.Id == tipoDocumentoVenta.Id))
+                if (context.TipoDocumentoVenta!.Any(tipoDocumentoVenta => tipoDocumentoVenta.Id == tipoDocumentoVenta.Id))
 
                     throw new TipoDocumentoVentaException("Este tipo de Documento de Venta ya existe");
 
-                this.context.TipoDocumentoVentas.Add(entity);
+                this.context.TipoDocumentoVenta!.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new DetalleVentaException(ex.Message); ;
+               this.logger.LogError("Error creando el tipo de documento de venta");
             }
 
         }
@@ -50,13 +56,15 @@ namespace Sales.Infrastructure.Repositories
                 tipoDocumentoVentaToRemove.IdUsuarioElimino = entity.IdUsuarioElimino;
 
 
-                this.context.TipoDocumentoVentas.Update(tipoDocumentoVentaToRemove);
+                this.context.TipoDocumentoVenta!.Update(tipoDocumentoVentaToRemove);
                 this.context.SaveChanges();
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new DetalleVentaException(ex.Message);
+                this.logger.LogError("Error eliminando el tipo de documento de venta");
+
+                //this.logger.LogError("Error eliminando el tipo de documento de venta", ex.ToString());
             }
 
         }
@@ -71,14 +79,20 @@ namespace Sales.Infrastructure.Repositories
                 tipoDocumentoVentaToUpdate.EsActivo = entity.EsActivo;
                 tipoDocumentoVentaToUpdate.Eliminado = entity.Eliminado;
 
-                this.context.TipoDocumentoVentas.Update(tipoDocumentoVentaToUpdate);
+                this.context.TipoDocumentoVenta!.Update(tipoDocumentoVentaToUpdate);
                 this.context.SaveChanges();
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new DetalleVentaException(ex.Message);
+                this.logger.LogError("Error Atualizando el tipo de documento de venta");
             }
         }
+
+        public List<TipoDocumentoVenta> GetTipoDocumentoVentaById(int Id)
+        {
+            return context.TipoDocumentoVenta!.Where(tdv => tdv.Id.Equals(Id)).ToList();
+        }
+       
     }
 }
