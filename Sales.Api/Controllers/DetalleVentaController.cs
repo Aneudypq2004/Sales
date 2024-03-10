@@ -22,8 +22,18 @@ namespace Sales.Api.Controllers
     [HttpGet("GetDetalleVentas")]
         public IActionResult Get()
         {
-            var detalleVentas = this.detalleVentaRepository.GetEntities();
-                return Ok(detalleVentas);
+            var detalleVenta = this.detalleVentaRepository.GetEntities().Select(dv => new DetalleVentaModel()
+            {  
+                Id = dv.Id,
+                MarcaProducto = dv.MarcaProducto,
+                DescripcionProducto = dv.DescripcionProducto,
+                CategoriaProducto = dv.CategoriaProducto,
+                Cantidad = dv.Cantidad,
+                Precio = dv.Precio,
+                Total = dv.Total
+            }); 
+
+            return Ok(detalleVenta);
         }
 
         
@@ -31,7 +41,19 @@ namespace Sales.Api.Controllers
         public IActionResult Get(int id)
         {
             var detalleVenta = this.detalleVentaRepository.GetEntity(id);
-            return Ok(detalleVenta);
+
+            var detalleVentaModel = new DetalleVentaModel()
+            {
+                Id = detalleVenta!.Id,
+                MarcaProducto = detalleVenta.MarcaProducto,
+                DescripcionProducto = detalleVenta.DescripcionProducto,
+                CategoriaProducto = detalleVenta.CategoriaProducto,
+                Cantidad = detalleVenta.Cantidad,
+                Precio = detalleVenta.Precio,
+                Total = detalleVenta.Total
+            };
+
+            return Ok(detalleVentaModel);
         }
 
        
@@ -47,11 +69,13 @@ namespace Sales.Api.Controllers
                 Precio = detalleVentaAddModel.Precio,
                 Total = detalleVentaAddModel.Total
             });
+
+            //return Ok("El detalle de venta Se ha guardado.");
         }
 
         
-        [HttpPut("{id}")]
-        public void Put( [FromBody] DetalleVentaModel detalleVentaUpdateModel)
+        [HttpPut("ActualizarDetalleVenta")]
+        public IActionResult Put( [FromBody] DetalleVentaModel detalleVentaUpdateModel)
         {
 
             this.detalleVentaRepository.Update
@@ -66,12 +90,21 @@ namespace Sales.Api.Controllers
                     Total = detalleVentaUpdateModel.Total
                 }
             );
+            return Ok("El detalle de venta ha sido actualizado");
         }
 
         
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("RemoveDetalleVenta")]
+        public IActionResult Delete(int id)
         {
+            this.detalleVentaRepository.Remove
+            (
+                new DetalleVenta()
+                {
+                    Id = id
+                }
+            );
+            return Ok("Este detalle de venta ha sido eliminado");
         }
     }
 }

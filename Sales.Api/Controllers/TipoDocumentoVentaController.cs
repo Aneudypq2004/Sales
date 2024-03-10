@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sales.Domain.Entities;
 using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Inteface;
 
@@ -10,33 +11,47 @@ namespace Sales.Api.Controllers
     [ApiController]
     public class TipoDocumentoVentaController : ControllerBase
     {
-        private ITipoDocumentoVentaRepository tipoDocumentoVentaRepository;
+        private readonly ITipoDocumentoVentaRepository tipoDocumentoVentaRepository;
 
         public TipoDocumentoVentaController(ITipoDocumentoVentaRepository tipoDocumentoVentaRepository)
         {
             this.tipoDocumentoVentaRepository = tipoDocumentoVentaRepository;
         }
 
-        // GET: api/<TipoDocumentoVentaController>
+        
         [HttpGet("GetTipoDocumento")]
         public IActionResult Get()
         {
             
-             var result = this.tipoDocumentoVentaRepository.GetEntities();
+             var result = this.tipoDocumentoVentaRepository.GetEntities().Select(tdv => new TipoDocumentoVentaModel()
+             {
+                 Id = tdv.Id,
+                 Descripcion = tdv.Descripcion,
+                 EsActivo = tdv.EsActivo,
+                 Eliminado = tdv.Eliminado
+             });
+            
             return Ok(result);
         }
 
-        // GET api/<TipoDocumentoVentaController>/5
+        
         [HttpGet("GetTipoDocumentoById")]
         public IActionResult Get(int id)
         {
-            var result  = this.tipoDocumentoVentaRepository.GetEntity(id);
-            return Ok(result);
+            var tipoDocumentoVenta = this.tipoDocumentoVentaRepository.GetEntity(id);
+            var tipoDocumentoVentaModel = new TipoDocumentoVentaModel()
+            {
+                Id = tipoDocumentoVenta!.Id,
+                Descripcion = tipoDocumentoVenta.Descripcion,
+                EsActivo = tipoDocumentoVenta.EsActivo,
+                Eliminado = tipoDocumentoVenta.Eliminado
+            };
+            return Ok(tipoDocumentoVentaModel);
         }
 
-        // POST api/<TipoDocumentoVentaController>
+        
         [HttpPost("SaveTipoDocumentoVenta")]
-        public void Post([FromBody] TipoDocumentoVentaModel tipoDocumentoVentaAddModel)
+        public IActionResult Post([FromBody] TipoDocumentoVentaModel tipoDocumentoVentaAddModel)
         {
             this.tipoDocumentoVentaRepository.Save(
                 new TipoDocumentoVenta()
@@ -46,11 +61,12 @@ namespace Sales.Api.Controllers
                     EsActivo = tipoDocumentoVentaAddModel.EsActivo,
                     Eliminado = tipoDocumentoVentaAddModel.Eliminado
                 });
+            return Ok("Este Tipo de documento ha sido guardado.");
         }
 
-        // PUT api/<TipoDocumentoVentaController>/5
+        
         [HttpPut("UpdateTipoDocumentoVenta")]
-        public void Put([FromBody] TipoDocumentoVentaModel tipoDocumentoVentaUpdateModel)
+        public IActionResult Put([FromBody] TipoDocumentoVentaModel tipoDocumentoVentaUpdateModel)
         {
             this.tipoDocumentoVentaRepository.Update(
                 new TipoDocumentoVenta()
@@ -60,12 +76,23 @@ namespace Sales.Api.Controllers
                     EsActivo = tipoDocumentoVentaUpdateModel.EsActivo,
                     Eliminado = tipoDocumentoVentaUpdateModel.Eliminado
                 });
+            return Ok("Este Tipo de documento ha sido actualizado.");
         }
 
+
         // DELETE api/<TipoDocumentoVentaController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("RemoveTipoDocumentoVenta")]
+        public IActionResult Delete(int id)
         {
+            this.tipoDocumentoVentaRepository.Remove
+            (
+                new TipoDocumentoVenta()
+                {
+                    Id = id
+                }
+            );
+
+            return Ok("Este Tipo de documento ha sido eliminado");
         }
     }
 }

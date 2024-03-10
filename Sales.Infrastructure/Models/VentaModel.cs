@@ -13,7 +13,7 @@ namespace Sales.Domain.Entities
         public decimal? Total { get; set; }
         public decimal? ImpuestoTotal { get; set; }
 
-        public DateTime FechaRegistro { get; set; }
+        public DateTime? FechaRegistro { get; set; }
 
     }
 }

@@ -19,7 +19,7 @@ namespace Sales.Infrastructure.Repositories
         }
 
         public override List<Venta> GetEntities()
-        {
+        { 
             return base.GetEntities()
                         .ToList();
         }
@@ -28,7 +28,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                if (context.Venta!.Any(venta => venta.NumeroVenta == venta.NumeroVenta))
+                if (context.Venta!.Any(v => v.NumeroVenta == v.NumeroVenta))
 
                     throw new VentaException("Este numero de venta ya se encuentra registrado");
 
@@ -45,7 +45,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                var ventaToRemove = this.GetEntity(entity.Id) ?? throw new VentaException("Este tipo de Documento de Venta ya existe");
+                var ventaToRemove = this.GetEntity(entity.Id) ?? throw new VentaException("Esta venta ya existe");
 
                 this.context.Venta!.Remove(ventaToRemove);
                 this.context.SaveChanges();
@@ -63,6 +63,7 @@ namespace Sales.Infrastructure.Repositories
                 var ventaToUpdate = this.GetEntity(entity.Id)?? throw new 
                 VentaException("Este tipo de Documento de Venta ya existe");
 
+                ventaToUpdate.NumeroVenta = entity.NumeroVenta;
                 ventaToUpdate!.NombreCliente = entity.NombreCliente;
                 ventaToUpdate.CocumentoCliente = entity.CocumentoCliente;
                 ventaToUpdate.SubTotal = entity.SubTotal;
