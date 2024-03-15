@@ -4,10 +4,7 @@ namespace Sales.Domain.Core
 {
     public abstract class BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
-
-        public bool EsActivo { get; set; }
+        
 
         public DateTime FechaRegistro { get; set; }
 
@@ -15,11 +12,11 @@ namespace Sales.Domain.Core
 
         public DateTime? FechaMod { get; set; }
 
-        public int IdUsuarioMod { get; set; }
+        public int? IdUsuarioMod { get; set; }
 
-        public int IdUsuarioElimino { get; set; }
+        public int? IdUsuarioElimino { get; set; }
 
-        public DateTime FechaElimino { get; set; }
+        public DateTime? FechaElimino { get; set; }
 
         public bool Eliminado { get; set; }
     }

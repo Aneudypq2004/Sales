@@ -20,7 +20,7 @@ namespace Sales.Api.Controllers
         [HttpGet("GetNegocio")]
         public IActionResult Get()
         {
-            var Negocios = this.negocioRepository.GetEntity;
+            var Negocios = this.negocioRepository.GetEntities();
             return Ok(Negocios);
         }
 
@@ -36,18 +36,26 @@ namespace Sales.Api.Controllers
         [HttpPost("SaveNegocio")]
         public void Post([FromBody] NegocioAddModel negocioAddModel)
         {
-            this.negocioRepository.Save(new Domain.Entities.negocios.Negocio() 
+            try
             {
-                UrlLogo = negocioAddModel.UrlLogo,
-                NombreLogo = negocioAddModel.NombreLogo,
-                NumeroDocumento = negocioAddModel.NumeroDocumento,
-                Nombre = negocioAddModel.Nombre,
-                Correo = negocioAddModel.Correo,
-                Direccion = negocioAddModel.Direccion,
-                Telefono = negocioAddModel.Telefono,
-                PorcentajeImpuesto = negocioAddModel.PorcentajeImpuesto,
-                SimboloMoneda = negocioAddModel.SimboloMoneda
-            });
+                this.negocioRepository.Save(new Domain.Entities.negocios.Negocio()
+                {
+                    UrlLogo = negocioAddModel.UrlLogo,
+                    NombreLogo = negocioAddModel.NombreLogo,
+                    NumeroDocumento = negocioAddModel.NumeroDocumento,
+                    Nombre = negocioAddModel.Nombre,
+                    Correo = negocioAddModel.Correo,
+                    Direccion = negocioAddModel.Direccion,
+                    Telefono = negocioAddModel.Telefono,
+                    PorcentajeImpuesto = negocioAddModel.PorcentajeImpuesto,
+                    SimboloMoneda = negocioAddModel.SimboloMoneda
+                });
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         // PUT api/<NegocioController>/5

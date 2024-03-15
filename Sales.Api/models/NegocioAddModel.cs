@@ -1,4 +1,6 @@
-﻿namespace Sales.Api.models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Sales.Api.models
 {
     public class NegocioAddModel
     {

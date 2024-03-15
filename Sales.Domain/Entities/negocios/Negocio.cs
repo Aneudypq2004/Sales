@@ -1,9 +1,11 @@
 ﻿using Sales.Domain.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sales.Domain.Entities.negocios
 {
     public class Negocio : BaseEntity
     {
+        public int Id { get; set; }
         public string? UrlLogo { get; set; }
         public string? NombreLogo { get; set;}
         public string? NumeroDocumento { get; set;}

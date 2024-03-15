@@ -28,9 +28,9 @@ namespace Sales.Infrastructure.core
             return DbEntities.ToList();
         }
 
-        public virtual TEntity GetEntity(int id)
+        public virtual TEntity GetEntity(int Id)
         {
-            return DbEntities.Find(id)!;
+            return DbEntities.Find(Id)!;
         }
         public virtual void Remuve(TEntity entity)
         {

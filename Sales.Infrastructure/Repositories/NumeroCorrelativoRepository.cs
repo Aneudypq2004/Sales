@@ -35,10 +35,9 @@ namespace Sales.Infrastructure.Repositories
                 throw new ConfigurationException(ex.Message);
             }
         }
-
         public override List<NumeroCorrelativo> GetEntities()
         {
-            return base.GetEntities().Where(NumeroCorrelativo => !NumeroCorrelativo.Eliminado).ToList();
+            return context.NumeroCorrelativo.ToList();
         }
 
         public override void Update(NumeroCorrelativo entity)

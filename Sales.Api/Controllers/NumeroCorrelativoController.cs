@@ -47,13 +47,13 @@ namespace Sales.Api.Controllers
 
         // PUT api/<NumeroCorrelativoController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int Id, [FromBody] string value)
         {
         }
 
         // DELETE api/<NumeroCorrelativoController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(int Id)
         {
         }
     }

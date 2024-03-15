@@ -20,9 +20,10 @@ namespace Sales.Infrastructure.Repositories
             this.context = context;
             Logger = logger;
         }
+
         public override List<Negocio> GetEntities()
         {
-            return base.GetEntities().Where(Negocio => !Negocio.Eliminado).ToList();
+            return context.Negocio.Where(Negocio => !Negocio.Eliminado).ToList();
         }
         public override void Update(Negocio entity)
         {
