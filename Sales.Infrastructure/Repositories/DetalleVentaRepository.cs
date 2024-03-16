@@ -22,15 +22,6 @@ namespace Sales.Infrastructure.Repositories
         {
             return context.DetalleVenta!.ToList();
 
-            /*Preguntar por esta parte
-             * try
-            {
-                return context.DetalleVenta!.ToList();
-            }
-            catch (Exception)
-            {
-                this.logger.LogError("Error creando el detalle de venta");
-            }*/
         }
         public override void Save(DetalleVenta entity)
         {
