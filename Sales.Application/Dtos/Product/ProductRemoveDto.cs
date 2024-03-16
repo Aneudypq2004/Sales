@@ -1,9 +1,8 @@
 ﻿namespace Sales.Api.Dtos.Product
 {
-    public class ProductAddDto : DtoBase
+    public class ProductRemoveDto : DtoBase
     {
         public int Id { get; set; }
-        public string? CodigoDeBarra { get; set; }
         public string? Marca { get; set; }
         public string? Descripcion { get; set; }
         public int? IdCategory { get; set; }

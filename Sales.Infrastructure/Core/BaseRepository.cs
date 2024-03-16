@@ -57,7 +57,7 @@ namespace Sales.Infrastructure.Core
                 DbEntity.Add(entity);
                 context.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 throw;
@@ -71,7 +71,7 @@ namespace Sales.Infrastructure.Core
                 DbEntity.Update(entity);
                 context.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 throw;

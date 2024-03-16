@@ -50,14 +50,15 @@ namespace Sales.Api.Controllers
 
 
         
-        [HttpPost("SaveProduct")]
-        public IActionResult Post([FromBody] CategoryAddDto categoryAddModel)
+        [HttpPost("SaveCategory")]
+        public IActionResult Post([FromBody] CategoryAddDto categoryAddDto)
         {
             categoryRepository.Save(new Domain.Entities.Production.Category()
             {
-                FechaRegistro = categoryAddModel.ChangeDate,
-                IdUsuarioCreacion = categoryAddModel.UserId,
-                Descripcion = categoryAddModel.Descripcion
+                FechaRegistro = categoryAddDto.ChangeDate,
+                IdUsuarioCreacion = categoryAddDto.UserId,
+                Id = categoryAddDto.Id,
+                Descripcion = categoryAddDto.Descripcion
             });
 
             return Ok("Categoria guardada correctamente.");
@@ -86,6 +87,7 @@ namespace Sales.Api.Controllers
             this.categoryRepository.Remove(new Category()
             {
                 Id = categoryRemove.Id,
+                Descripcion = categoryRemove.Descripcion,
                 FechaElimino = categoryRemove.ChangeDate,
                 IdUsuarioElimino = categoryRemove.UserId
             });

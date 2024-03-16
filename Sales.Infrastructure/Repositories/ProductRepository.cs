@@ -30,20 +30,21 @@ namespace Sales.Infrastructure.Repositories
                              where pro.IdCategoria == categoryId
                              select new ProductModel()
                              {
+                                 Id = pro.Id,
                                  IdCategory = ca.Id,
-                                 CodigoDeBarra = pro.CodigoBarra,
                                  Marca = pro.Marca,
                                  Descripcion = pro.Descripcion,
                                  Stock = pro.Stock,
                                  UrlImagen = pro.UrlImagen,
                                  NombreImagen = pro.NombreImagen,
-                                 Precio = pro.Precio
+                                 Precio = pro.Precio,
+                                 FechaRegistro = pro.FechaRegistro
                              }).ToList();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
 
-                logger.LogError("Error obteniendo los productos", exc);
+                logger.LogError("Error obteniendo los productos", ex);
             }
 
             return products;
@@ -69,9 +70,9 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Update(ProductToUpdate);
                 context.SaveChanges();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                logger.LogError("Error actualizando el producto", exc);
+                logger.LogError("Error actualizando el producto", ex);
             }
         }
 
@@ -85,10 +86,10 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
 
-                logger.LogError("Error guardando el producto", exc); ;
+                logger.LogError("Error guardando el producto", ex); ;
             }
         }
 
@@ -105,10 +106,10 @@ namespace Sales.Infrastructure.Repositories
                 context.Producto.Update(ProductToRemove);
                 context.SaveChanges();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
 
-                logger.LogError("Error eliminando el producto", exc);
+                logger.LogError("Error eliminando el producto", ex);
             }
         }
     }

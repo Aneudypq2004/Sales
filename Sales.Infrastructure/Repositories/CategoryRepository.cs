@@ -38,9 +38,9 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Update(CategoryToUpdate);
                 context.SaveChanges();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                logger.LogError("Error al actualizar la categoria", exc);
+                logger.LogError("Error al actualizar la categoria", ex);
             }
         }
 
@@ -54,10 +54,10 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
 
-                logger.LogError("No fue posible guardar la categoria", exc); ;
+                logger.LogError("No fue posible guardar la categoria", ex); ;
             }
         }
 
@@ -74,10 +74,10 @@ namespace Sales.Infrastructure.Repositories
                 context.Categoria.Update(CategoryToRemove);
                 context.SaveChanges();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
 
-                logger.LogError("No fue posible eliminar la categoria", exc);
+                logger.LogError("No fue posible eliminar la categoria", ex);
             }
         }
     }

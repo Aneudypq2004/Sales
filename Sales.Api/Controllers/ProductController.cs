@@ -24,8 +24,14 @@ namespace Sales.Api.Controllers
             var products = productRepository.GetEntities().Select(cd => new ProductGetModel()
             {
                 Id = cd.Id,
+                Marca = cd.Marca,
                 Descripcion = cd.Descripcion,
-                FechaRegistro = cd.FechaRegistro
+                IdCategory = cd.IdCategoria,
+                Stock = cd.Stock,
+                UrlImagen = cd.UrlImagen,
+                NombreImagen = cd.NombreImagen,
+                Precio = cd.Precio,
+                FechaRegistro = cd.FechaRegistro,
             });
 
             return Ok(products);
@@ -55,7 +61,6 @@ namespace Sales.Api.Controllers
             productRepository.Save(new Domain.Entities.Production.Product()
             {
                 Id = productAddModel.Id,
-                CodigoBarra = productAddModel.CodigoDeBarra,
                 Marca = productAddModel.Marca,
                 Descripcion = productAddModel.Descripcion,
                 IdCategoria = productAddModel.IdCategory,
