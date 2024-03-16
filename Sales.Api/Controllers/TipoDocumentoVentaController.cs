@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Domain.Entities;
+using Sales.Api.Dtos.TipoDocumentoVenta;
+using Sales.Api.Models;
 using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Inteface;
 
@@ -23,12 +24,11 @@ namespace Sales.Api.Controllers
         public IActionResult Get()
         {
             
-             var result = this.tipoDocumentoVentaRepository.GetEntities().Select(tdv => new TipoDocumentoVentaModel()
+             var result = this.tipoDocumentoVentaRepository.GetEntities().Select(tdv => new TipoDocumentoVentaGetModel()
              {
                  Id = tdv.Id,
                  Descripcion = tdv.Descripcion,
-                 EsActivo = tdv.EsActivo,
-                 Eliminado = tdv.Eliminado
+                 EsActivo = tdv.EsActivo
              });
             
             return Ok(result);
@@ -39,56 +39,53 @@ namespace Sales.Api.Controllers
         public IActionResult Get(int id)
         {
             var tipoDocumentoVenta = this.tipoDocumentoVentaRepository.GetEntity(id);
-            var tipoDocumentoVentaModel = new TipoDocumentoVentaModel()
+            TipoDocumentoVentaGetModel tipoDocumentoVentaGetModel= new TipoDocumentoVentaGetModel()
             {
                 Id = tipoDocumentoVenta!.Id,
                 Descripcion = tipoDocumentoVenta.Descripcion,
-                EsActivo = tipoDocumentoVenta.EsActivo,
-                Eliminado = tipoDocumentoVenta.Eliminado
+                EsActivo = tipoDocumentoVenta.EsActivo
             };
-            return Ok(tipoDocumentoVentaModel);
+            return Ok(tipoDocumentoVentaGetModel);
         }
 
         
         [HttpPost("SaveTipoDocumentoVenta")]
-        public IActionResult Post([FromBody] TipoDocumentoVentaModel tipoDocumentoVentaAddModel)
+        public IActionResult Post([FromBody] TipoDocumentoVentaAddDto tipoDocumentoVentaAddDto)
         {
-            this.tipoDocumentoVentaRepository.Save(
+            this.tipoDocumentoVentaRepository.Save( 
                 new TipoDocumentoVenta()
                 {
-                    Id = tipoDocumentoVentaAddModel.Id,
-                    Descripcion = tipoDocumentoVentaAddModel.Descripcion,
-                    EsActivo = tipoDocumentoVentaAddModel.EsActivo,
-                    Eliminado = tipoDocumentoVentaAddModel.Eliminado
+                    Id = tipoDocumentoVentaAddDto.Id,
+                    Descripcion = tipoDocumentoVentaAddDto.Descripcion,
+                    EsActivo = tipoDocumentoVentaAddDto.EsActivo
+                    
                 });
             return Ok("Este Tipo de documento ha sido guardado.");
         }
 
         
         [HttpPut("UpdateTipoDocumentoVenta")]
-        public IActionResult Put([FromBody] TipoDocumentoVentaModel tipoDocumentoVentaUpdateModel)
+        public IActionResult Put([FromBody] TipoDocumentoVentaUpdateDto tipoDocumentoVentaUpdateDto)
         {
             this.tipoDocumentoVentaRepository.Update(
                 new TipoDocumentoVenta()
                 {  
-                    Id = tipoDocumentoVentaUpdateModel.Id,
-                    Descripcion = tipoDocumentoVentaUpdateModel.Descripcion,
-                    EsActivo = tipoDocumentoVentaUpdateModel.EsActivo,
-                    Eliminado = tipoDocumentoVentaUpdateModel.Eliminado
+                    Id = tipoDocumentoVentaUpdateDto.Id,
+                    Descripcion = tipoDocumentoVentaUpdateDto.Descripcion,
+                    EsActivo = tipoDocumentoVentaUpdateDto.EsActivo
                 });
             return Ok("Este Tipo de documento ha sido actualizado.");
         }
 
-
         // DELETE api/<TipoDocumentoVentaController>/5
         [HttpDelete("RemoveTipoDocumentoVenta")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(TipoDocumentoVentaRemoveDto tipoDocumentoVentaRemove)
         {
             this.tipoDocumentoVentaRepository.Remove
             (
                 new TipoDocumentoVenta()
                 {
-                    Id = id
+                    Id = tipoDocumentoVentaRemove.Id
                 }
             );
 

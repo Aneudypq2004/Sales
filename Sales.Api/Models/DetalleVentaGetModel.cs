@@ -1,10 +1,9 @@
-﻿namespace Sales.Api.Models
+﻿
+namespace Sales.Api.Models
 {
-    public class DetalleVentaAddModel
+    public class DetalleVentaGetModel
     {
-        public int IdVenta { get; set; }
-        public int IdProducto { get; set; }
-
+        public int Id { get; set; }
         public string? MarcaProducto { get; set; }
 
         public string? DescripcionProducto { get; set; }

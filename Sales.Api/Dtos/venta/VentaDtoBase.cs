@@ -1,15 +1,13 @@
-﻿namespace Sales.Api.Models
+﻿namespace Sales.Api.Dtos.venta
 {
-    public class VentaAddModel
+    public class VentaDtoBase:DtoBase
     {
-        public int Id { get; set; }
 
         public string? NombreCliente { get; set; }
         public decimal? SubTotal { get; set; }
         public decimal? ImpuestoTotal { get; set; }
         public decimal? Total { get; set; }
-
-        public DateTime FechaRegistro { get; set; }
+        
 
     }
 }

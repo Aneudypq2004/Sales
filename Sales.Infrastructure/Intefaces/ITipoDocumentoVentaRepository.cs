@@ -1,7 +1,4 @@
-﻿
-
-
-using Sales.Domain.Entities.ModuloVentas;
+﻿using Sales.Domain.Entities.ModuloVentas;
 using Sales.Domain.Repository;
 
 namespace Sales.Infrastructure.Inteface

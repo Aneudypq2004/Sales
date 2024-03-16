@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sales.Api.Dtos.venta;
 using Sales.Domain.Entities;
 using Sales.Infrastructure.Inteface;
 
@@ -22,10 +23,9 @@ namespace Sales.Api.Controllers
         [HttpGet("GetVentas")]
         public IActionResult Get()
         {
-            var venta = this.ventaRepository.GetEntities().Select(v => new VentaModel()
+            var venta = this.ventaRepository.GetEntities().Select(v => new VentaGetModel()
             {
                 Id = v.Id,
-
                 NombreCliente = v.NombreCliente,
                 SubTotal = v.SubTotal,
                 ImpuestoTotal = v.ImpuestoTotal,
@@ -41,10 +41,9 @@ namespace Sales.Api.Controllers
         {
             var venta = this.ventaRepository.GetEntity(id);
 
-            var VentaModel = new VentaModel()
+            VentaGetModel ventaGetModel = new VentaGetModel()
             {
                 Id = venta!.Id,
-                NumeroVenta = venta!.NumeroVenta,
                 NombreCliente = venta.NombreCliente,
                 SubTotal = venta.SubTotal,
                 ImpuestoTotal = venta.ImpuestoTotal,
@@ -52,22 +51,21 @@ namespace Sales.Api.Controllers
                 FechaRegistro = venta.FechaRegistro
             };
 
-            return Ok(VentaModel);
+            return Ok(ventaGetModel);
         }
 
         
         [HttpPost("SaveVenta")]
-        public IActionResult Post([FromBody] VentaModel ventaAddModel)
+        public IActionResult Post([FromBody] VentaAddDto ventaAddDto)
         {
             this.ventaRepository.Save(
                 new Venta() {
-                    Id = ventaAddModel.Id,
-                    NumeroVenta = ventaAddModel.NumeroVenta,
-                    NombreCliente = ventaAddModel.NombreCliente,
-                    SubTotal = ventaAddModel.SubTotal,
-                    ImpuestoTotal = ventaAddModel.ImpuestoTotal,
-                    Total = ventaAddModel.Total,
-                    FechaRegistro = ventaAddModel.FechaRegistro
+                    Id = ventaAddDto.Id,
+                    NombreCliente = ventaAddDto.NombreCliente,
+                    SubTotal = ventaAddDto.SubTotal,
+                    ImpuestoTotal = ventaAddDto.ImpuestoTotal,
+                    Total = ventaAddDto.Total,
+                    FechaRegistro = ventaAddDto.FechaRegistro
                 }
             ); 
             return Ok("La venta ha sido guardada.");
@@ -75,17 +73,17 @@ namespace Sales.Api.Controllers
 
         // PUT api/<VentaController>/5
         [HttpPut("ActualizarVenta")]
-        public IActionResult Put([FromBody] VentaModel ventaUpdateModel)
+        public IActionResult Put([FromBody] VentaUpdateDto ventaUpdateDto)
         {
             this.ventaRepository.Update
             (
                 new Venta()
                 {   
-                    NumeroVenta = ventaUpdateModel.NumeroVenta,
-                    NombreCliente = ventaUpdateModel.NombreCliente,
-                    SubTotal = ventaUpdateModel.SubTotal,
-                    ImpuestoTotal = ventaUpdateModel.SubTotal,
-                    Total = ventaUpdateModel.Total,
+                   
+                    NombreCliente = ventaUpdateDto.NombreCliente,
+                    SubTotal = ventaUpdateDto.SubTotal,
+                    ImpuestoTotal = ventaUpdateDto.SubTotal,
+                    Total = ventaUpdateDto.Total,
                 }
             );
 
@@ -94,13 +92,13 @@ namespace Sales.Api.Controllers
 
         // DELETE api/<VentaController>/5
         [HttpDelete("RemoveVenta")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(VentaRemoveDto ventaRemoveDto)
         {
             this.ventaRepository.Remove
             (
                 new Venta()
                 {
-                    Id = id
+                    Id = ventaRemoveDto.Id
                 }
             );
 

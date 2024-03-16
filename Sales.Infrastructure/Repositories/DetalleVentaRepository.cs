@@ -36,8 +36,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                if (context.DetalleVenta!.Any(detalleVenta => detalleVenta.CategoriaProducto == detalleVenta.CategoriaProducto))
-
+                if (context.DetalleVenta!.Any(dv => dv.DescripcionProducto == dv.DescripcionProducto))
                     throw new DetalleVentaException("Esta Categoria de venta ya se encuentra registrada");
                 
                 this.context.DetalleVenta!.Add(entity);
