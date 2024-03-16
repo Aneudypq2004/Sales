@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.User;
-using Sales.Api.Models;
+using Sales.Application.Dtos.User;
+using Sales.Application.Models;
 using Sales.Domain.Entities.ModuloUsuario;
 using Sales.Infrastructure.Interfaces;
 
@@ -62,8 +62,8 @@ namespace Sales.Api.Controllers
                 Telefono = user.Telefono,
                 Clave = user.Clave,
                 IdUsuarioCreacion = user.IdUsuario,
-                FechaRegistro = user.ChangeTime
-
+                FechaRegistro = user.ChangeTime,
+                IdRol = user.IdRol
              });
 
             return Ok("Usuario registrado correctamente");

@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Dtos.Configuration
+﻿namespace Sales.Application.Dtos.Configuration
 {
     public class ConfigurationDeleteDto
     {

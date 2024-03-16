@@ -3,32 +3,35 @@ using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Interfaces;
+using Sales.Infrastructure.Services;
 
 namespace Sales.Infrastructure.Repositories
 {
     public class RolRepository : BaseRepository<Rol>, IRolRepository
     {
         private readonly SalesContext context;
+        private readonly LoggerService<UserRepository> logger;
 
-        public RolRepository(SalesContext context) : base(context)
+        public RolRepository(SalesContext context, LoggerService<UserRepository> logger) : base(context)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         public override void Save(Rol NewRol)
         {
             try
             {
-                var existRol = Exists(r => r.Descripcion == NewRol.Descripcion);
+                //var existRol = Exists(r => r.Descripcion == NewRol.Descripcion);
 
-                if (existRol)
-                {
-                    throw new RolException("El Rol ya existe");
-                }
+                //if (existRol)
+                //{
+                //    throw new RolException("El Rol ya existe");
+                //}
 
                 context.Rol!.Add(NewRol);
 
-                context.SaveChangesAsync();
+                context.SaveChanges();
             }
             catch (Exception exc)
             {
@@ -51,7 +54,7 @@ namespace Sales.Infrastructure.Repositories
 
                 context.Rol!.Update(rol);
 
-                context.SaveChangesAsync();
+                context.SaveChanges();
 
             }
             catch (Exception exc)
@@ -73,7 +76,7 @@ namespace Sales.Infrastructure.Repositories
                 rol.IdUsuarioMod = UpdateRol.IdUsuarioMod;
 
                 context.Rol!.Update(rol);
-                context.SaveChangesAsync();
+                context.SaveChanges();
 
             }
             catch (Exception exc)
@@ -87,11 +90,11 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                return FindAll(r => !r.Eliminado);
+                return context.Rol!.ToList();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-               throw new RolException("No se pudo obtener los roles");
+               throw new RolException("No se pudo obtener los roles " + e.Message);
             }
         }
 
@@ -101,10 +104,10 @@ namespace Sales.Infrastructure.Repositories
             {
                 return context.Rol!.Find(id);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                throw new RolException("No se pudo obtener el rol");
+                throw new RolException("No se pudo obtener el rol" + e.Message );
             }
         }
     }

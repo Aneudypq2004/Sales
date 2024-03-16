@@ -3,16 +3,19 @@ using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Interfaces;
+using Sales.Infrastructure.Services;
 
 namespace Sales.Infrastructure.Repositories
 {
     public class UserRepository : BaseRepository<Usuario>,  IUserRepository
     {
         private readonly SalesContext context;
+        private readonly LoggerService<UserRepository> logger;
 
-        public UserRepository(SalesContext context) : base(context)
+        public UserRepository(SalesContext context, LoggerService<UserRepository> logger) : base(context)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         public override void Save(Usuario NewUser)
@@ -28,7 +31,10 @@ namespace Sales.Infrastructure.Repositories
 
                 context.Usuario!.Add(NewUser);
 
-                context.SaveChangesAsync();
+                var result = context.SaveChanges();
+
+                Console.WriteLine(result);
+
             }
             catch (Exception exc)
             {
@@ -40,7 +46,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                return FindAll(user => !user.Eliminado);
+                return context.Usuario!.ToList();
             }
             catch (Exception)
             {
@@ -90,7 +96,7 @@ namespace Sales.Infrastructure.Repositories
 
                 context.Usuario!.Update(user);
 
-                context.SaveChangesAsync();
+                context.SaveChanges();
 
             }
             catch (Exception exc)
@@ -113,7 +119,7 @@ namespace Sales.Infrastructure.Repositories
     
                 context.Usuario!.Update(user);
 
-                context.SaveChangesAsync();
+                context.SaveChanges();
 
             }
             catch (Exception exc)

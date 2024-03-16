@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Dtos.User
+﻿namespace Sales.Application.Dtos.User
 {
     public class UserUpdateDto : UserDtoBase
     {

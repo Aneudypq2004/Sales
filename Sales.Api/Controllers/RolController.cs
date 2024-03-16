@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.Rol;
-using Sales.Api.Models;
+using Sales.Application.Dtos.Rol;
+using Sales.Application.Dtos.User;
+using Sales.Application.Models;
 using Sales.Domain.Entities.Usuario.Usuario;
 using Sales.Infrastructure.Interfaces;
 

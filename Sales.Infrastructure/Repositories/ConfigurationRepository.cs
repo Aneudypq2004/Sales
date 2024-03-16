@@ -3,23 +3,26 @@ using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Core;
 using Sales.Infrastructure.Exceptions;
 using Sales.Infrastructure.Interfaces;
+using Sales.Infrastructure.Services;
 
 namespace Sales.Infrastructure.Repositories
 {
     public class ConfigurationRepository : BaseRepository<Configuracion>, IConfigurationRepository
     {
         private readonly SalesContext context;
+        private readonly LoggerService<UserRepository> logger;
 
-        public ConfigurationRepository(SalesContext context) : base(context)
+        public ConfigurationRepository(SalesContext context, LoggerService<UserRepository> logger) : base(context)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         public override Configuracion? GetEntity (int Id)
         {
             try
             {
-                return context.Configuracion!.Find(Id);
+                return context.Configuracion!.Find((short)Id);
             }
             catch (Exception exc)
             {
@@ -45,7 +48,7 @@ namespace Sales.Infrastructure.Repositories
             try
             {
                 context.Configuracion!.Add(configuration);
-                context.SaveChangesAsync();
+                context.SaveChanges();
             }
             catch (Exception exc)
             {
@@ -62,7 +65,7 @@ namespace Sales.Infrastructure.Repositories
 
                 context.Configuracion!.Remove(configuration);
 
-                context.SaveChangesAsync();
+                context.SaveChanges();
             }
             catch (Exception exc)
             {
@@ -84,7 +87,7 @@ namespace Sales.Infrastructure.Repositories
 
                 context.Configuracion!.Update(configuration);
 
-                context.SaveChangesAsync();
+                context.SaveChanges();
             }
             catch (Exception exc)
             {

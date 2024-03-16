@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.Configuration;
-using Sales.Api.Models;
-using Sales.Domain.Entities.ModuloUsuario;
+using Sales.Application.Dtos.Configuration;
+using Sales.Application.Models;
 using Sales.Domain.Entities.Usuario.Usuario;
 using Sales.Infrastructure.Interfaces;
-using Sales.Infrastructure.Model;
 
 
 namespace Sales.Api.Controllers
@@ -35,7 +33,7 @@ namespace Sales.Api.Controllers
         }
 
         [HttpGet("GetConfigurationByID")]
-        public ActionResult Get(int id)
+        public ActionResult Get(short id)
         {
             var result = repository.GetEntity(id);
 

@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Dtos.Rol
+﻿namespace Sales.Application.Dtos.Rol
 {
     public class RolUpdateDto : RolDtoBase
     {

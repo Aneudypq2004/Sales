@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Models
+﻿namespace Sales.Application.Models
 {
     public class RolGetModel
     {
