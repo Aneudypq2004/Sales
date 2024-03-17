@@ -1,6 +1,6 @@
-﻿using Sales.Api.Dtos.Product;
-using Sales.Api.Models.Product;
+﻿using Sales.Application.Dtos.Product;
 using Sales.Application.Core;
+using Sales.Application.Models.Product;
 
 namespace Sales.Application.Contract
 {

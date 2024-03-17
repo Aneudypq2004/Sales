@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sales.Api.Dtos.Category;
-using Sales.Api.Models.Category;
+using Sales.Application.Dtos.Category;
+using Sales.Application.Models.Category;
 using Sales.Application.Contract;
 using Sales.Application.Core;
+using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Interfaces;
 
 namespace Sales.Application.Services
@@ -12,7 +13,8 @@ namespace Sales.Application.Services
         private readonly ILogger<CategoryService> logger;
         private readonly ICategoryRepository categoryRepository;
 
-        public CategoryService(ILogger<CategoryService> logger, ICategoryRepository categoryRepository) : base (logger)
+        public CategoryService(ILogger<CategoryService> logger,
+                               ICategoryRepository categoryRepository) : base (logger)
         {
             this.logger = logger;
             this.categoryRepository = categoryRepository;
@@ -24,7 +26,7 @@ namespace Sales.Application.Services
 
             try
             {
-                    var query = categoryRepository.GetEntities().Select(cd => new CategoryGetModel 
+                    result.Data = categoryRepository.GetEntities().Select(cd => new CategoryGetModel 
                     {
                         Id = cd.Id,
                         Description = cd.Descripcion,
@@ -35,7 +37,7 @@ namespace Sales.Application.Services
             {
                 result.Success = false;
                 result.Message = "Error obteniendo las categorias.";
-                this.logger.LogError(result.Message, ex.ToString());
+                logger.LogError(result.Message, ex.ToString());
             }
 
             return result;
@@ -69,7 +71,7 @@ namespace Sales.Application.Services
 
         public ServiceResult<CategoryGetModel> Save(CategoryAddDto categoryAddDto)
         {
-            ServiceResult<List<CategoryGetModel>> result = new ServiceResult<List<CategoryGetModel>>();
+            ServiceResult<CategoryGetModel> result = new ServiceResult<CategoryGetModel>();
 
             try
             {
@@ -77,22 +79,21 @@ namespace Sales.Application.Services
                 {
                     result.Success = false;
                     result.Message = "La descripción de la categoria debe tener 50 carácteres o menos.";
-                    return new ServiceResult<CategoryGetModel>();
+                    return result;
                 }
 
                 if (categoryRepository.Exists(ca => ca.Descripcion == categoryAddDto?.Descripcion))
                 {
                     result.Success = false;
                     result.Message = $"La descripción de la categoria { categoryAddDto?.Descripcion } ya existe.";
-                    return new ServiceResult<CategoryGetModel>();
+                    return result;
                 }
 
-                categoryRepository.Save(new Domain.Entities.Production.Category()
+                categoryRepository.Save(new Category()
                 {
+                    Descripcion = categoryAddDto.Descripcion,
                     FechaRegistro = categoryAddDto.ChangeDate,
                     IdUsuarioCreacion = categoryAddDto.UserId,
-                    Id = categoryAddDto.Id,
-                    Descripcion = categoryAddDto.Descripcion
                 });
             }
             catch (Exception ex)
@@ -101,8 +102,9 @@ namespace Sales.Application.Services
                 result.Message = "Error guardando la categoria.";
                 logger.LogError(result.Message, ex.ToString());
             }
-            return new ServiceResult<CategoryGetModel>();
+            return result;
         }
+
 
         public ServiceResult<CategoryGetModel> Update(CategoryUpdateDto updateDto)
         {
@@ -118,7 +120,7 @@ namespace Sales.Application.Services
                     return result;
                 }
 
-                if (updateDto.Descripcion.Length >= 50)
+                if (updateDto.Descripcion?.Length >= 50)
                 {
                     result.Success = false;
                     result.Message = "La descripción de la categoría debe tener 50 caracteres o menos.";
@@ -132,16 +134,13 @@ namespace Sales.Application.Services
                     return result;
                 }
 
-                category.Descripcion = updateDto.Descripcion;
-                category.FechaRegistro = updateDto.ChangeDate;
-                categoryRepository.Update(category);
-
-                result.Data = new CategoryGetModel
+                categoryRepository.Update(new Category()
                 {
-                    Id = category.Id,
-                    Description = category.Descripcion,
-                    FechaRegistro = category.FechaRegistro
-                };
+                    Id = updateDto.Id,
+                    Descripcion = updateDto.Descripcion,
+                    FechaMod = updateDto.ChangeDate,
+                    IdUsuarioMod = updateDto.UserId,
+                });
             }
             catch (Exception ex)
             {
@@ -153,6 +152,7 @@ namespace Sales.Application.Services
             return result;
         }
 
+
         public ServiceResult<CategoryGetModel> Remove(CategoryRemoveDto removeDto)
         {
             ServiceResult<CategoryGetModel> result = new ServiceResult<CategoryGetModel>();
@@ -160,6 +160,7 @@ namespace Sales.Application.Services
             try
             {
                 var category = categoryRepository.GetEntity(removeDto.Id);
+
                 if (category == null)
                 {
                     result.Success = false;
@@ -167,14 +168,13 @@ namespace Sales.Application.Services
                     return result;
                 }
 
-                categoryRepository.Remove(category);
-
-                result.Data = new CategoryGetModel
+                categoryRepository.Remove(new Category()
                 {
-                    Id = category.Id,
-                    Description = category.Descripcion,
-                    FechaRegistro = category.FechaRegistro
-                };
+                    Id = removeDto.Id,
+                    FechaElimino = removeDto.ChangeDate,
+                    IdUsuarioElimino = removeDto.UserId
+                });
+
             }
             catch (Exception ex)
             {
@@ -186,6 +186,7 @@ namespace Sales.Application.Services
             return result;
         }
 
+         
  
     }
 }

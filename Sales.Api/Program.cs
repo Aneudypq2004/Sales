@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Sales.Application.Contract;
+using Sales.Application.Services;
+using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Interfaces;
 using Sales.Infrastructure.Repositories;
@@ -16,6 +19,11 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("SalesContext")))
 // Repositories
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+// App Services
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<IProductService, ProductService>();
+
 
 builder.Services.AddControllers();
 

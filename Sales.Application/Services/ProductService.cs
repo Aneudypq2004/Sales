@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sales.Api.Dtos.Product;
-using Sales.Api.Models.Product;
+using Sales.Application.Dtos.Product;
+using Sales.Application.Models.Product;
 using Sales.Application.Contract;
 using Sales.Application.Core;
+using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Interfaces;
 
 namespace Sales.Application.Services
@@ -18,14 +19,13 @@ namespace Sales.Application.Services
             this.productRepository = productRepository;
         }
 
-
         public ServiceResult<List<ProductGetModel>> GetAll()
         {
             ServiceResult<List<ProductGetModel>> result = new ServiceResult<List<ProductGetModel>>();
 
             try
             {
-                var query = productRepository.GetEntities().Select(cd => new ProductGetModel
+                result.Data = productRepository.GetEntities().Select(cd => new ProductGetModel
                 {
                     Id = cd.Id,
                     Marca = cd.Marca,
@@ -35,7 +35,6 @@ namespace Sales.Application.Services
                     UrlImagen = cd.UrlImagen,
                     NombreImagen = cd.NombreImagen,
                     Precio = cd.Precio,
-                    FechaRegistro = cd.FechaRegistro,
                 }).ToList();
             }
             catch (Exception ex)
@@ -64,8 +63,7 @@ namespace Sales.Application.Services
                     Stock = product.Stock,
                     UrlImagen = product.UrlImagen,
                     NombreImagen = product.NombreImagen,
-                    Precio = product.Precio,
-                    FechaRegistro = product.FechaRegistro,
+                    Precio = product.Precio
                 };
             }
             catch (Exception ex)
@@ -93,8 +91,7 @@ namespace Sales.Application.Services
                     Stock = pro.Stock,
                     UrlImagen = pro.UrlImagen,
                     NombreImagen = pro.NombreImagen,
-                    Precio = pro.Precio,
-                    FechaRegistro = pro.FechaRegistro
+                    Precio = pro.Precio
                 }).ToList();
 
                 result.Data = products;
@@ -111,7 +108,7 @@ namespace Sales.Application.Services
 
         public ServiceResult<ProductGetModel> Save(ProductAddDto addDto)
         {
-            ServiceResult<List<ProductGetModel>> result = new ServiceResult<List<ProductGetModel>>();
+            ServiceResult<ProductGetModel> result = new ServiceResult<ProductGetModel>();
 
             try
             {
@@ -157,19 +154,18 @@ namespace Sales.Application.Services
                     return new ServiceResult<ProductGetModel>();
                 }
 
-                    productRepository.Save(new Domain.Entities.Production.Product()
+                    productRepository.Save(new Product()
                 {
-                    FechaRegistro = addDto.ChangeDate,
-                    IdUsuarioCreacion = addDto.UserId,
-                    Id = addDto.Id,
                     Marca = addDto.Marca,
                     Descripcion = addDto.Descripcion,
                     IdCategoria = addDto.IdCategory,
                     Stock = addDto.Stock,
                     UrlImagen = addDto.UrlImagen,
                     NombreImagen = addDto.NombreImagen,
-                    Precio = addDto.Precio
-                });
+                    Precio = addDto.Precio,
+                    FechaRegistro = addDto.ChangeDate,
+                    IdUsuarioCreacion = addDto.UserId
+                    });
             }
 
             catch (Exception ex)
@@ -179,7 +175,7 @@ namespace Sales.Application.Services
                 logger.LogError(result.Message, ex.ToString());
             }
 
-            return new ServiceResult<ProductGetModel>();
+            return result;
         }
 
         public ServiceResult<ProductGetModel> Update(ProductUpdateDto updateDto)
@@ -229,10 +225,8 @@ namespace Sales.Application.Services
                     return result;
                 }
 
-                productRepository.Update(new Domain.Entities.Production.Product()
+                productRepository.Update(new Product()
                 {
-                    FechaRegistro = updateDto.ChangeDate,
-                    IdUsuarioCreacion = updateDto.UserId,
                     Id = updateDto.Id,
                     Marca = updateDto.Marca,
                     Descripcion = updateDto.Descripcion,
@@ -240,7 +234,9 @@ namespace Sales.Application.Services
                     Stock = updateDto.Stock,
                     UrlImagen = updateDto.UrlImagen,
                     NombreImagen = updateDto.NombreImagen,
-                    Precio = updateDto.Precio
+                    Precio = updateDto.Precio,
+                    FechaRegistro = updateDto.ChangeDate,
+                    IdUsuarioCreacion = updateDto.UserId,
                 });
             }
             catch (Exception ex)
@@ -250,8 +246,7 @@ namespace Sales.Application.Services
                 result.Message = "Error actualizando el producto.";
                 logger.LogError(result.Message, ex.ToString());
             }
-
-
+            
             return result;
         }
 
@@ -269,7 +264,12 @@ namespace Sales.Application.Services
                     return result;
                 }
 
-                productRepository.Remove(product);
+                productRepository.Remove(new Product()
+                {
+                    Id = removeDto.Id,
+                    FechaElimino = removeDto.ChangeDate,
+                    IdUsuarioElimino = removeDto.UserId
+                });
             }
 
             catch (Exception ex)

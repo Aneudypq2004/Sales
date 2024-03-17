@@ -1,5 +1,5 @@
-﻿using Sales.Api.Dtos.Category;
-using Sales.Api.Models.Category;
+﻿using Sales.Application.Models.Category;
+using Sales.Application.Dtos.Category;
 
 namespace Sales.Application.Contract
 {

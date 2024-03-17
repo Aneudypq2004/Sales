@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Dtos
+﻿namespace Sales.Application.Dtos
 {
     public class DtoBase
     {

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.Category;
-using Sales.Api.Models.Category;
-using Sales.Domain.Entities.Production;
-using Sales.Infrastructure.Interfaces;
+using Sales.Application.Dtos.Category;
+using Sales.Application.Contract;
 
 
 namespace Sales.Api.Controllers
@@ -12,23 +10,23 @@ namespace Sales.Api.Controllers
 
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
-        public CategoryController(ICategoryRepository categoryRepository)
+        private readonly ICategoryService categoryService;
+        public CategoryController(ICategoryService categoryService)
         {
-            this.categoryRepository = categoryRepository;
+            this.categoryService = categoryService;
         }
 
         [HttpGet("GetCategories")]
         public IActionResult Get()
         {
-            var categories = categoryRepository.GetEntities().Select(cd => new CategoryGetModel()
-            {
-                Id = cd.Id,
-                Description = cd.Descripcion,
-                FechaRegistro = cd.FechaRegistro
-            });
+            var result = categoryService.GetAll();
 
-            return Ok(categories);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
 
@@ -36,16 +34,14 @@ namespace Sales.Api.Controllers
         [HttpGet("GetCategoryById")]
         public IActionResult Get(int id)
         {
-            var category = categoryRepository.GetEntity(id);
+            var result = categoryService.GetById(id);
 
-            CategoryGetModel categoryGetModel = new CategoryGetModel()
+            if (!result.Success)
             {
-                Id = category.Id,
-                Description = category.Descripcion,
-                FechaRegistro = category.FechaRegistro
-            };
+                return BadRequest(result);
+            }
 
-            return Ok(categoryGetModel);
+            return Ok(result);
         }
 
 
@@ -53,46 +49,43 @@ namespace Sales.Api.Controllers
         [HttpPost("SaveCategory")]
         public IActionResult Post([FromBody] CategoryAddDto categoryAddDto)
         {
-            categoryRepository.Save(new Domain.Entities.Production.Category()
-            {
-                FechaRegistro = categoryAddDto.ChangeDate,
-                IdUsuarioCreacion = categoryAddDto.UserId,
-                Id = categoryAddDto.Id,
-                Descripcion = categoryAddDto.Descripcion
-            });
+            var result = categoryService.Save(categoryAddDto);
 
-            return Ok("Categoria guardada correctamente.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
 
         }
 
 
         [HttpPost("UpdateCategory")]
-        public IActionResult Put([FromBody] CategoryUpdateDto categoryUpdte)
+        public IActionResult Put([FromBody] CategoryUpdateDto categoryUpdteDto)
         {
-            this.categoryRepository.Update(new Category()
-            {
-                Id = categoryUpdte.Id,
-                FechaMod = categoryUpdte.ChangeDate,
-                IdUsuarioMod = categoryUpdte.UserId,
-                Descripcion = categoryUpdte.Descripcion,
-            });
+            var result = categoryService.Update(categoryUpdteDto);
 
-            return Ok("Categoria actualizada correctamente.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
         
 
         [HttpPost("RemoveCategory")]
         public IActionResult Remove([FromBody] CategoryRemoveDto categoryRemove)
         {
-            this.categoryRepository.Remove(new Category()
-            {
-                Id = categoryRemove.Id,
-                Descripcion = categoryRemove.Descripcion,
-                FechaElimino = categoryRemove.ChangeDate,
-                IdUsuarioElimino = categoryRemove.UserId
-            });
+            var result = categoryService.Remove(categoryRemove);
 
-            return Ok("Categoria eliminada correctamente.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
     }
 }

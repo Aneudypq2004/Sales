@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Models.Category
+﻿namespace Sales.Application.Models.Category
 {
     public class CategoryGetModel
     {

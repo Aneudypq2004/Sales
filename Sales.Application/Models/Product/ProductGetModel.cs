@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Models.Product
+﻿namespace Sales.Application.Models.Product
 {
     public class ProductGetModel
     {

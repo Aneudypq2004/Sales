@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.Product;
-using Sales.Api.Models.Product;
-using Sales.Domain.Entities.Production;
-using Sales.Infrastructure.Interfaces;
+using Sales.Application.Dtos.Product;
+using Sales.Application.Contract;
 
 
 namespace Sales.Api.Controllers
@@ -11,30 +9,24 @@ namespace Sales.Api.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductRepository productRepository;
+        private readonly IProductService productService;
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(IProductService productService)
         {
-            this.productRepository = productRepository;
+            this.productService = productService;
         }
 
         [HttpGet("GetProducts")]
         public IActionResult Get()
         {
-            var products = productRepository.GetEntities().Select(cd => new ProductGetModel()
-            {
-                Id = cd.Id,
-                Marca = cd.Marca,
-                Descripcion = cd.Descripcion,
-                IdCategory = cd.IdCategoria,
-                Stock = cd.Stock,
-                UrlImagen = cd.UrlImagen,
-                NombreImagen = cd.NombreImagen,
-                Precio = cd.Precio,
-                FechaRegistro = cd.FechaRegistro,
-            });
+            var result = productService.GetAll();
 
-            return Ok(products);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         
@@ -42,61 +34,54 @@ namespace Sales.Api.Controllers
         [HttpGet("GetProductById")]
         public IActionResult Get(int id)
         {
-            var product = productRepository.GetEntity(id);
+            var result = productService.GetById(id);
 
-            ProductGetModel productGetModel = new ProductGetModel()
+            if (!result.Success)
             {
-                Id = product.Id,
-                Descripcion = product.Descripcion,
-                FechaRegistro = product.FechaRegistro
-            };
+                return BadRequest(result);
+            }
 
-            return Ok(productGetModel);
+            return Ok(result);
         }
 
 
         [HttpPost("SaveProduct")]
-        public void Post([FromBody] ProductAddDto productAddModel)
+        public IActionResult Post([FromBody] ProductAddDto productAdd)
         {
-            productRepository.Save(new Domain.Entities.Production.Product()
+            var result = productService.Save(productAdd);
+
+            if (!result.Success)
             {
-                Id = productAddModel.Id,
-                Marca = productAddModel.Marca,
-                Descripcion = productAddModel.Descripcion,
-                IdCategoria = productAddModel.IdCategory,
-                Stock = productAddModel.Stock,
-                UrlImagen = productAddModel.UrlImagen,
-                NombreImagen = productAddModel.NombreImagen,
-                Precio = productAddModel.Precio,
-                FechaRegistro = productAddModel.FechaRegistro,
-            });
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("UpdateProduct")]
         public IActionResult Put([FromBody] ProductUpdateDto productUpdate)
         {
-            productRepository.Update(new Product()
-            {
-                Id = productUpdate.Id,
-                FechaMod = productUpdate.ChangeDate,
-                IdUsuarioMod = productUpdate.UserId,
-                Descripcion = productUpdate.Descripcion,
-            });
+            var result = productService.Update(productUpdate);
 
-            return Ok("Producto actualizado correctamente.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("RemoveProduct")]
         public IActionResult Remove([FromBody] ProductRemoveDto productRemove)
         {
-            productRepository.Remove(new Product()
-            {
-                Id = productRemove.Id,
-                FechaElimino = productRemove.ChangeDate,
-                IdUsuarioElimino = productRemove.UserId
-            });
+            var result = productService.Remove(productRemove);
 
-            return Ok("Producto eliminado correctamente.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
     }
 }
