@@ -3,6 +3,7 @@
     public interface IBaseRepository<TEntity> where TEntity : class
     {
         TEntity GetEntity(int id);
+
         List<TEntity> GetEntities();
 
         List<TEntity> FindAll(Func<TEntity, bool> filter);

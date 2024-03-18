@@ -1,10 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Sales.Application.Contract;
-using Sales.Application.Services;
-using Sales.Domain.Entities.Production;
+using Sales.Ioc.CategoryDependency;
 using Sales.Infrastructure.Context;
-using Sales.Infrastructure.Interfaces;
-using Sales.Infrastructure.Repositories;
+using Sales.Ioc.ProductDependency;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,13 +13,13 @@ builder.Services.AddDbContext<SalesContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("SalesContext")));
 
 
-// Repositories
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+// Dependencies
+    // Category
+builder.Services.AddCategoryDependency();
 
-// App Services
-builder.Services.AddTransient<ICategoryService, CategoryService>();
-builder.Services.AddTransient<IProductService, ProductService>();
+    // Product
+builder.Services.AddProductDependency();
+
 
 
 builder.Services.AddControllers();

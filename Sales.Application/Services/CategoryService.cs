@@ -1,20 +1,21 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sales.Application.Dtos.Category;
-using Sales.Application.Models.Category;
 using Sales.Application.Contract;
 using Sales.Application.Core;
+using Sales.Application.Dtos.Category;
+using Sales.Application.Dtos.Enums;
+using Sales.Application.Models.Category;
 using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Interfaces;
 
 namespace Sales.Application.Services
 {
-    public class CategoryService : BaseService, ICategoryService
+    public class CategoryService : ICategoryService
     {
         private readonly ILogger<CategoryService> logger;
         private readonly ICategoryRepository categoryRepository;
 
         public CategoryService(ILogger<CategoryService> logger,
-                               ICategoryRepository categoryRepository) : base (logger)
+                                  ICategoryRepository categoryRepository)
         {
             this.logger = logger;
             this.categoryRepository = categoryRepository;
@@ -26,12 +27,12 @@ namespace Sales.Application.Services
 
             try
             {
-                    result.Data = categoryRepository.GetEntities().Select(cd => new CategoryGetModel 
-                    {
-                        Id = cd.Id,
-                        Description = cd.Descripcion,
-                        FechaRegistro = cd.FechaRegistro
-                    }).ToList();
+                result.Data = categoryRepository.GetEntities().Select(cd => new CategoryGetModel
+                {
+                    Id = cd.Id,
+                    Description = cd.Descripcion,
+                    FechaRegistro = cd.FechaRegistro
+                }).ToList();
             }
             catch (Exception ex)
             {
@@ -68,32 +69,25 @@ namespace Sales.Application.Services
             return result;
         }
 
-
-        public ServiceResult<CategoryGetModel> Save(CategoryAddDto categoryAddDto)
+        public ServiceResult<CategoryGetModel> Save(CategoryAddDto addDto)
         {
             ServiceResult<CategoryGetModel> result = new ServiceResult<CategoryGetModel>();
 
             try
             {
-                if (categoryAddDto.Descripcion?.Length >= 50)
-                {
-                    result.Success = false;
-                    result.Message = "La descripción de la categoria debe tener 50 carácteres o menos.";
-                    return result;
-                }
+                var resultIsValid = IsValid(addDto, DtoAction.Save);
 
-                if (categoryRepository.Exists(ca => ca.Descripcion == categoryAddDto?.Descripcion))
+                if (!resultIsValid.Success)
                 {
-                    result.Success = false;
-                    result.Message = $"La descripción de la categoria { categoryAddDto?.Descripcion } ya existe.";
+                    result.Message = resultIsValid.Message;
                     return result;
                 }
 
                 categoryRepository.Save(new Category()
                 {
-                    Descripcion = categoryAddDto.Descripcion,
-                    FechaRegistro = categoryAddDto.ChangeDate,
-                    IdUsuarioCreacion = categoryAddDto.UserId,
+                    Descripcion = addDto.Descripcion,
+                    FechaRegistro = addDto.ChangeDate,
+                    IdUsuarioCreacion = addDto.UserId,
                 });
             }
             catch (Exception ex)
@@ -105,32 +99,17 @@ namespace Sales.Application.Services
             return result;
         }
 
-
         public ServiceResult<CategoryGetModel> Update(CategoryUpdateDto updateDto)
         {
             ServiceResult<CategoryGetModel> result = new ServiceResult<CategoryGetModel>();
 
             try
             {
-                var category = categoryRepository.GetEntity(updateDto.Id);
-                if (category == null)
-                {
-                    result.Success = false;
-                    result.Message = "Categoría no encontrada.";
-                    return result;
-                }
+                var resultIsValid = IsValid(updateDto, DtoAction.Update);
 
-                if (updateDto.Descripcion?.Length >= 50)
+                if (!resultIsValid.Success)
                 {
-                    result.Success = false;
-                    result.Message = "La descripción de la categoría debe tener 50 caracteres o menos.";
-                    return result;
-                }
-
-                if (categoryRepository.Exists(ca => ca.Descripcion == updateDto.Descripcion && ca.Id != updateDto.Id))
-                {
-                    result.Success = false;
-                    result.Message = $"La descripción de la categoría {updateDto.Descripcion} ya existe.";
+                    result.Message = resultIsValid.Message;
                     return result;
                 }
 
@@ -151,7 +130,6 @@ namespace Sales.Application.Services
 
             return result;
         }
-
 
         public ServiceResult<CategoryGetModel> Remove(CategoryRemoveDto removeDto)
         {
@@ -186,7 +164,36 @@ namespace Sales.Application.Services
             return result;
         }
 
-         
- 
+        private ServiceResult<string> IsValid(CategoryDtoBase categoryDtoBase, DtoAction action)
+        {
+            ServiceResult<string> result = new ServiceResult<string>();
+
+            if (string.IsNullOrEmpty(categoryDtoBase.Descripcion))
+            {
+                result.Success = false;
+                result.Message = "La categoría es requerida.";
+                return result;
+            }
+
+            if (categoryDtoBase.Descripcion?.Length >= 50)
+            {
+                result.Success = false;
+                result.Message = "La descripción de la categoría debe tener 50 caracteres o menos.";
+                return result;
+            }
+
+            if (action == DtoAction.Save)
+            {
+                if (categoryRepository.Exists(ca => ca.Descripcion == categoryDtoBase.Descripcion))
+                {
+                    result.Success = false;
+                    result.Message = $"La descripción de la categoría {categoryDtoBase.Descripcion} ya existe.";
+                    return result;
+                }
+            }
+
+            return result;
+
+        }
     }
 }

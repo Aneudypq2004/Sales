@@ -37,8 +37,7 @@ namespace Sales.Infrastructure.Repositories
                                  Stock = pro.Stock,
                                  UrlImagen = pro.UrlImagen,
                                  NombreImagen = pro.NombreImagen,
-                                 Precio = pro.Precio,
-                                 FechaRegistro = pro.FechaRegistro
+                                 Precio = pro.Precio
                              }).ToList();
             }
             catch (Exception ex)

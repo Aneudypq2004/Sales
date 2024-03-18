@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sales.Application.Dtos.Product;
-using Sales.Application.Models.Product;
 using Sales.Application.Contract;
 using Sales.Application.Core;
+using Sales.Application.Dtos.Enums;
+using Sales.Application.Dtos.Product;
+using Sales.Application.Models.Product;
 using Sales.Domain.Entities.Production;
 using Sales.Infrastructure.Interfaces;
 
@@ -13,7 +14,7 @@ namespace Sales.Application.Services
         private readonly ILogger<ProductService> logger;
         private readonly IProductRepository productRepository;
 
-        public ProductService(ILogger<ProductService> logger, IProductRepository productRepository) 
+        public ProductService(ILogger<ProductService> logger, IProductRepository productRepository)
         {
             this.logger = logger;
             this.productRepository = productRepository;
@@ -48,7 +49,7 @@ namespace Sales.Application.Services
 
         public ServiceResult<ProductGetModel> GetById(int id)
         {
-            ServiceResult <ProductGetModel> result = new ServiceResult<ProductGetModel>();
+            ServiceResult<ProductGetModel> result = new ServiceResult<ProductGetModel>();
 
             try
             {
@@ -76,25 +77,25 @@ namespace Sales.Application.Services
             return result;
         }
 
-        public ServiceResult<List<ProductGetModel>> GetProductsByCategory(int categoryId)
+        public ServiceResult<ProductGetModel> GetProductsByCategory(int categoryId)
         {
-            ServiceResult<List<ProductGetModel>> result = new ServiceResult<List<ProductGetModel>>();
+            ServiceResult<ProductGetModel> result = new ServiceResult<ProductGetModel>();
 
             try
             {
-                var products = productRepository.GetProductsByCategory(categoryId).Select(pro => new ProductGetModel
-                { 
-                    Id = pro.Id,
-                    Marca = pro.Marca,
-                    Descripcion = pro.Descripcion,
-                    IdCategory = pro.IdCategory,
-                    Stock = pro.Stock,
-                    UrlImagen = pro.UrlImagen,
-                    NombreImagen = pro.NombreImagen,
-                    Precio = pro.Precio
-                }).ToList();
+                var product = productRepository.GetEntity(categoryId);
 
-                result.Data = products;
+                result.Data = new ProductGetModel()
+                {
+                    Id = product.Id,
+                    Marca = product.Marca,
+                    Descripcion = product.Descripcion,
+                    IdCategory = product.IdCategoria,
+                    Stock = product.Stock,
+                    UrlImagen = product.UrlImagen,
+                    NombreImagen = product.NombreImagen,
+                    Precio = product.Precio
+                };
             }
             catch (Exception ex)
             {
@@ -112,49 +113,15 @@ namespace Sales.Application.Services
 
             try
             {
-                if (addDto.Marca?.Length >= 50)
+                var resultIsValid = IsValid(addDto, DtoAction.Save);
+
+                if (!resultIsValid.Success)
                 {
-                    result.Success = false;
-                    result.Message = "La marca del producto debe tener 50 carácteres o menos.";
-                    return new ServiceResult<ProductGetModel>();
+                    result.Message = resultIsValid.Message;
+                    return result;
                 }
 
-                if (addDto.Descripcion?.Length >= 100)
-                {
-                    result.Success = false;
-                    result.Message = "La descripción del producto debe tener 100 carácteres o menos.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                if (addDto.UrlImagen?.Length > 500)
-                {
-                    result.Success = false;
-                    result.Message = "La URL de la imagen del producto debe tener 500 caracteres o menos.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                if (addDto.NombreImagen?.Length > 100)
-                {
-                    result.Success = false;
-                    result.Message = "El nombre de la imagen del producto debe tener 100 caracteres o menos.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                if (addDto.Precio <= 0 || addDto.Precio >= 99999999)
-                {
-                    result.Success = false;
-                    result.Message = "El precio del producto debe ser mayor que 0 y menos que 1000000.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                if (productRepository.Exists(ca => ca.Descripcion == addDto?.Descripcion))
-                {
-                    result.Success = false;
-                    result.Message = $"La descripción del producto {addDto?.Descripcion} ya existe.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                    productRepository.Save(new Product()
+                productRepository.Save(new Product()
                 {
                     Marca = addDto.Marca,
                     Descripcion = addDto.Descripcion,
@@ -165,7 +132,7 @@ namespace Sales.Application.Services
                     Precio = addDto.Precio,
                     FechaRegistro = addDto.ChangeDate,
                     IdUsuarioCreacion = addDto.UserId
-                    });
+                });
             }
 
             catch (Exception ex)
@@ -183,45 +150,11 @@ namespace Sales.Application.Services
             ServiceResult<ProductGetModel> result = new ServiceResult<ProductGetModel>();
             try
             {
-                if (updateDto.Marca?.Length >= 50)
-                {
-                    result.Success = false;
-                    result.Message = "La marca del producto debe tener 50 carácteres o menos.";
-                    return new ServiceResult<ProductGetModel>();
-                }
+                var resultIsValid = IsValid(updateDto, DtoAction.Update);
 
-                if (updateDto.Descripcion?.Length >= 100)
+                if (!resultIsValid.Success)
                 {
-                    result.Success = false;
-                    result.Message = "La descripción del producto debe tener 100 carácteres o menos.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                if (updateDto.UrlImagen?.Length > 500)
-                {
-                    result.Success = false;
-                    result.Message = "La URL de la imagen del producto debe tener 500 caracteres o menos.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                if (updateDto.NombreImagen?.Length > 100)
-                {
-                    result.Success = false;
-                    result.Message = "El nombre de la imagen del producto debe tener 100 caracteres o menos.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                if (updateDto.Precio <= 0 || updateDto.Precio >= 99999999)
-                {
-                    result.Success = false;
-                    result.Message = "El precio del producto debe ser mayor que 0 y menos que 1000000.";
-                    return new ServiceResult<ProductGetModel>();
-                }
-
-                if (productRepository.Exists(ca => ca.Descripcion == updateDto.Descripcion && ca.Id != updateDto.Id))
-                {
-                    result.Success = false;
-                    result.Message = $"La descripción del producto {updateDto.Descripcion} ya existe.";
+                    result.Message = resultIsValid.Message;
                     return result;
                 }
 
@@ -246,7 +179,7 @@ namespace Sales.Application.Services
                 result.Message = "Error actualizando el producto.";
                 logger.LogError(result.Message, ex.ToString());
             }
-            
+
             return result;
         }
 
@@ -282,5 +215,56 @@ namespace Sales.Application.Services
             return result;
         }
 
+        private ServiceResult<string> IsValid(ProductDtoBase productDtoBase, DtoAction action)
+        {
+            ServiceResult<string> result = new ServiceResult<string>();
+
+            if (productDtoBase.Marca?.Length >= 50)
+            {
+                result.Success = false;
+                result.Message = "La marca del producto debe tener 50 carácteres o menos.";
+                return result;
+            }
+
+            if (productDtoBase.Descripcion?.Length >= 100)
+            {
+                result.Success = false;
+                result.Message = "La descripción del producto debe tener 100 carácteres o menos.";
+                return result;
+            }
+
+            if (productDtoBase.UrlImagen?.Length > 500)
+            {
+                result.Success = false;
+                result.Message = "La URL de la imagen del producto debe tener 500 caracteres o menos.";
+                return result;
+            }
+
+            if (productDtoBase.NombreImagen?.Length > 100)
+            {
+                result.Success = false;
+                result.Message = "El nombre de la imagen del producto debe tener 100 caracteres o menos.";
+                return result;
+            }
+
+            if (productDtoBase.Precio <= 0 || productDtoBase.Precio >= 99999999)
+            {
+                result.Success = false;
+                result.Message = "El precio del producto debe ser mayor que 0 y menos que 1000000.";
+                return result;
+            }
+
+            if (action == DtoAction.Save)
+            {
+                if (productRepository.Exists(pro => pro.Descripcion == productDtoBase.Descripcion))
+                {
+                    result.Success = false;
+                    result.Message = $"La descripción del producto {productDtoBase.Descripcion} ya existe.";
+                    return result;
+                }
+            }
+
+            return result;
+        }
     }
 }
