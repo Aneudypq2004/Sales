@@ -1,5 +1,4 @@
-﻿
-namespace Sales.Application.Models
+﻿namespace Sales.Application.Models
 {
     public class TipoDocumentoVentaGetModel
     {
@@ -7,5 +6,7 @@ namespace Sales.Application.Models
         public string? Descripcion { get; set; }
         public bool? EsActivo { get; set; }
         public DateTime? FechaRegistro { get; set; }
+        public bool? Eliminado { get; set; }
+        public int? IdUsuarioCreacion { get; set; }
     }
 }

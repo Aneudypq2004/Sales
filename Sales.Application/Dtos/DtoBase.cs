@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Dtos
+﻿namespace Sales.Application.Dtos
 {
     public class DtoBase
     {
@@ -6,5 +6,6 @@
 
         public DateTime? FechaRegistro { get; set; }
 
+        public int? IdUsuarioCreacion { get; set; }
     }
 }

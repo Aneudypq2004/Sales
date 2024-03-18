@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Dtos.DetalleVenta
+﻿namespace Sales.Application.Dtos.DetalleVenta
 {
     public class DetalleVentaRemoveDto
     {

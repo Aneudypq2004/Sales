@@ -2,16 +2,16 @@
 
 namespace Sales.Application.Contracts
 {
-    public interface IBaseService<TGetModel> where TGetModel : class
+    public interface IBaseService<TDtoAdd, TDtoUpdate, TDtoRemove,TModel> where TModel : class
     {
-        ServiceResult<List<TGetModel>> GetAll();
+        ServiceResult<List<TModel>> GetAll();
 
-        ServiceResult<TGetModel> GetById(dynamic id);
+        ServiceResult<TModel> GetById(int id);
 
-        ServiceResult<TGetModel> Save(TGetModel entity);
+        ServiceResult<TModel> Save(TDtoAdd dtoAdd);
 
-        ServiceResult<int> Remove(TGetModel entity);
+        ServiceResult<TModel> Remove(TDtoRemove dtoRemove);
 
-        ServiceResult<int> Update(TGetModel entity);
+        ServiceResult<TModel> Update(TDtoUpdate dtoUpdate);
     }
 }
