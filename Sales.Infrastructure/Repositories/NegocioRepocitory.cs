@@ -7,6 +7,7 @@ using Sales.Infrastructure.core;
 using Sales.Infrastructure.Exeption;
 using Sales.Infrastructure.Interface;
 
+
 namespace Sales.Infrastructure.Repositories
 {
     public class NegocioRepocitory : BaseRepository<Negocio>, INegocioRepository
@@ -43,10 +44,10 @@ namespace Sales.Infrastructure.Repositories
                 this.context.Negocio.Update(NegocioToUpdate);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (NegocioException exc)
             {
 
-                throw new ConfigurationException(ex.Message);
+                throw new ConfigurationException(exc.Message);
             }
         }
             public override void Save(Negocio entity)
@@ -60,10 +61,10 @@ namespace Sales.Infrastructure.Repositories
                 this.context.Negocio.Add(entity);
                 this.context.SaveChanges();
             }
-            catch (Exception ex)
+            catch (NegocioException exc)
             {
 
-                throw new ConfigurationException(ex.Message);
+                throw new ConfigurationException(exc.Message);
             }
 
         }
