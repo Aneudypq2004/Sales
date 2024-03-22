@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sales.Api.Dtos.NumeroCorrelativo;
 using Sales.Api.models;
 using Sales.Domain.Entities.negocios;
 using Sales.Infrastructure.Interface;
+using static System.Collections.Specialized.BitVector32;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Sales.Api.Controllers
 {
@@ -20,41 +21,95 @@ namespace Sales.Api.Controllers
         [HttpGet("GetNumeroCorrelativos")]
         public IActionResult Get()
         {
-            var numeroCorrelativos = this.numeroCorrelativoRepository.GetEntities();
-            return Ok(numeroCorrelativos);
+            var result = this.numeroCorrelativoRepository.GetEntities().Select(cd =>new NumeroCorrelativoGetModel()
+            {
+                Id = cd.Id,
+                UltimoNumero = cd.UltimoNumero,
+                CantidadDigitos = cd.CantidadDigitos,
+                Gestion = cd.Gestion
+            });
+            return Ok(result);
         }
 
 
         [HttpGet("GetNumeroCorrelativosById")]
         public IActionResult Get(int id)
         {
-            var numeroCorrelativos = this.numeroCorrelativoRepository.GetEntity(id);
-            return Ok(numeroCorrelativos);
+            var numeroCorrelativos = numeroCorrelativoRepository.GetEntity(id);
+            if (numeroCorrelativos == null) return BadRequest();
+            var numeroCorrelativosGetModel = new NumeroCorrelativoGetModel()
+            {
+                Id = id,
+                UltimoNumero = numeroCorrelativos.UltimoNumero,
+                CantidadDigitos = numeroCorrelativos.CantidadDigitos,
+                Gestion = numeroCorrelativos.Gestion
+            };
+            return Ok(numeroCorrelativosGetModel);
         }
 
 
 
         [HttpPost("SaveNumeroCorrelativo")]
-        public void Post([FromBody] NumeroCorrelativoAddModel numeroCorrelativoAddModel){
-            this.numeroCorrelativoRepository.Save(new Domain.Entities.negocios.NumeroCorrelativo()
+        public ActionResult Post([FromBody] NumeroCorrelativoAddDto numeroCorrelativoAddDto)
+        {
+            try
             {
-                UltimoNumero = numeroCorrelativoAddModel.UltimoNumero,
-                CantidadDigitos = numeroCorrelativoAddModel.CantidadDigitos,
-                Gestion = numeroCorrelativoAddModel.Gestion,
-                FechaActualizacion = numeroCorrelativoAddModel.FechaActualizacion
+                this.numeroCorrelativoRepository.Save(new NumeroCorrelativo()
+            {
+                UltimoNumero = numeroCorrelativoAddDto.UltimoNumero,
+                CantidadDigitos = numeroCorrelativoAddDto.CantidadDigitos,
+                Gestion = numeroCorrelativoAddDto.Gestion
             });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Ok("el numero corelativo se a registrado correctamente");
         }
 
         // PUT api/<NumeroCorrelativoController>/5
-        [HttpPut("{id}")]
-        public void Put(int Id, [FromBody] string value)
+        [HttpPut("UpdateNumeroCorrelativo")]
+        public ActionResult Put([FromBody] NumeroCorrelativoUpdateDto numeroCorrelativoUpdateDto)
         {
+            try
+            {
+                numeroCorrelativoRepository.Update(new NumeroCorrelativo()
+                {
+                    Id = numeroCorrelativoUpdateDto.Id,
+                    UltimoNumero = numeroCorrelativoUpdateDto.UltimoNumero,
+                    CantidadDigitos = numeroCorrelativoUpdateDto.CantidadDigitos,
+                    Gestion = numeroCorrelativoUpdateDto.Gestion,
+                    FechaActualizacion = numeroCorrelativoUpdateDto.ChangeTime
+                });
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Ok("el numero corelativo se a actualizado correctamente");
         }
 
         // DELETE api/<NumeroCorrelativoController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int Id)
+        [HttpDelete("DeleteNumeroCorrelativo")]
+        public ActionResult Delete([FromBody]NumeroCorrelativoDeleteDto numeroCorrelativoDeleteDto)
         {
+            try
+            {
+                numeroCorrelativoRepository.Remuve(new NumeroCorrelativo()
+                {
+                    Id = numeroCorrelativoDeleteDto.Id
+                });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Ok("el numero corelativo se a eliminado correctamente");
         }
     }
 }

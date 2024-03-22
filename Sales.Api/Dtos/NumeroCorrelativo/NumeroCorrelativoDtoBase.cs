@@ -1,7 +1,8 @@
-﻿namespace Sales.Api.models
+﻿namespace Sales.Api.Dtos.NumeroCorrelativo
 {
-    public class NumeroCorrelativoAddModel
+    public class NumeroCorrelativoDtoBase:BaseDto
     {
+        public int Id { get; set; }
         public int? UltimoNumero { get; set; }
         public int? CantidadDigitos { get; set; }
         public string? Gestion { get; set; }

@@ -1,14 +1,11 @@
-﻿
-using Sales.Domain.Core;
-
-namespace Sales.Domain.Entities.negocio
+﻿namespace Sales.Api.models
 {
-    internal class NumerroCorrelativo:BaseEntity
+    public class NumeroCorrelativoGetModel
     {
+        public int Id { get; set; }
         public int? UltimoNumero { get; set; }
         public int? CantidadDigitos { get; set; }
-        public string? Gestion {  get; set; }
+        public string? Gestion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
-
     }
 }

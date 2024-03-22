@@ -10,8 +10,8 @@ namespace Sales.Infrastructure.Context
         {
             
         }
-        public DbSet<Negocio> Negocio { get; set; }
-        public DbSet<NumeroCorrelativo> NumeroCorrelativo { get; set; }
+        public DbSet<Negocio>? Negocio { get; set; }
+        public DbSet<NumeroCorrelativo>? NumeroCorrelativo { get; set; }
 
     }
 }

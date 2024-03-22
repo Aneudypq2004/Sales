@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Sales.Api.models
+﻿namespace Sales.Api.Dtos.Negocio
 {
-    public class NegocioAddModel
+    public class NegocioDtoBase:BaseDto
     {
         public string? UrlLogo { get; set; }
         public string? NombreLogo { get; set; }
