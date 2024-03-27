@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sales.Application.Contracts.Interfaces;
 using Sales.Application.Core;
-using Sales.Application.Dtos.Enum;
 using Sales.Application.Dtos.venta;
+using Sales.Application.Dtos.Enum;
 using Sales.Application.Models;
-using Sales.Domain.Entities;
+using Sales.Domain.Entities.ModuloVentas;
 using Sales.Infrastructure.Inteface;
 
 
@@ -29,6 +29,8 @@ namespace Sales.Application.Service
                 result.Data = this.ventaRepository.GetEntities().Select(v => new VentaGetModel()
                 {
                     Id = v.Id,
+                    IdTipoDocumentoVenta = v.IdTipoDocumentoVenta,
+                    Numeroventa = v.NumeroVenta,
                     NombreCliente = v.NombreCliente,
                     SubTotal = v.SubTotal,
                     ImpuestoTotal = v.ImpuestoTotal,
@@ -59,6 +61,8 @@ namespace Sales.Application.Service
                 result.Data = new VentaGetModel()
                 {
                     Id = venta!.Id,
+                    IdTipoDocumentoVenta = venta!.IdTipoDocumentoVenta,
+                    Numeroventa = venta.NumeroVenta,
                     NombreCliente = venta!.NombreCliente,
                     SubTotal = venta.SubTotal,
                     ImpuestoTotal = venta.ImpuestoTotal,
@@ -108,6 +112,8 @@ namespace Sales.Application.Service
                 this.ventaRepository.Save( new Venta()
                 {
                     Id = ventaAddDto.Id,
+                    IdUsuario = ventaAddDto.IdUsuario,
+                    NumeroVenta = ventaAddDto.Numeroventa,
                     NombreCliente = ventaAddDto!.NombreCliente,
                     SubTotal = ventaAddDto.SubTotal,
                     ImpuestoTotal = ventaAddDto.ImpuestoTotal,
@@ -136,6 +142,9 @@ namespace Sales.Application.Service
 
                 this.ventaRepository.Update(new Venta()
                 {
+                    Id = ventaUpdateDto.Id,
+                    IdUsuario = ventaUpdateDto.IdUsuario,
+                    NumeroVenta = ventaUpdateDto.Numeroventa,
                     NombreCliente = ventaUpdateDto!.NombreCliente,
                     SubTotal = ventaUpdateDto.SubTotal,
                     ImpuestoTotal = ventaUpdateDto.ImpuestoTotal,
@@ -196,7 +205,17 @@ namespace Sales.Application.Service
                 return result;
             }
 
+            if (ventaDtoBase.IdUsuarioCreacion == null)
+            {
+                result.Success = false;
+                result.Message = "El Id del Usuarioes requerido.";
+                return result;
+            }
+
             return result;
+
+           
+
         }
     }
 }

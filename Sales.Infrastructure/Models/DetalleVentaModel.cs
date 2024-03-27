@@ -4,6 +4,9 @@ namespace Sales.Domain.Entities.ModuloVentas
     public class DetalleVentaModel
     {
         public int Id { get; set; }
+        public int? IdVenta { get; set; }
+
+        public int? IdProducto { get; set; }
 
         public string? MarcaProducto { get; set;}
 

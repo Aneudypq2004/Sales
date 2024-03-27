@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.TipoDocumentoVenta;
-using Sales.Api.Models;
-using Sales.Domain.Entities.ModuloVentas;
-using Sales.Infrastructure.Inteface;
+using Sales.Application.Contracts.Interfaces;
+using Sales.Application.Dtos.TipoDocumentoVenta;
+
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,25 +12,24 @@ namespace Sales.Api.Controllers
     [ApiController]
     public class TipoDocumentoVentaController : ControllerBase
     {
-        private readonly ITipoDocumentoVentaRepository tipoDocumentoVentaRepository;
+        private readonly ITipoDocumentoVentaService tipoDocumentoVentaService;
 
-        public TipoDocumentoVentaController(ITipoDocumentoVentaRepository tipoDocumentoVentaRepository)
+        public TipoDocumentoVentaController(ITipoDocumentoVentaService tipoDocumentoVentaService)
         {
-            this.tipoDocumentoVentaRepository = tipoDocumentoVentaRepository;
+            this.tipoDocumentoVentaService = tipoDocumentoVentaService;
         }
 
         
         [HttpGet("GetTipoDocumento")]
         public IActionResult Get()
         {
-            
-             var result = this.tipoDocumentoVentaRepository.GetEntities().Select(tdv => new TipoDocumentoVentaGetModel()
-             {
-                 Id = tdv.Id,
-                 Descripcion = tdv.Descripcion,
-                 EsActivo = tdv.EsActivo
-             });
-            
+
+            var result = this.tipoDocumentoVentaService.GetAll();
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
 
@@ -38,58 +37,53 @@ namespace Sales.Api.Controllers
         [HttpGet("GetTipoDocumentoById")]
         public IActionResult Get(int id)
         {
-            var tipoDocumentoVenta = this.tipoDocumentoVentaRepository.GetEntity(id);
-            TipoDocumentoVentaGetModel tipoDocumentoVentaGetModel= new TipoDocumentoVentaGetModel()
+            var result = this.tipoDocumentoVentaService.GetById(id);
+            if (!result.Success)
             {
-                Id = tipoDocumentoVenta!.Id,
-                Descripcion = tipoDocumentoVenta.Descripcion,
-                EsActivo = tipoDocumentoVenta.EsActivo
-            };
-            return Ok(tipoDocumentoVentaGetModel);
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         
         [HttpPost("SaveTipoDocumentoVenta")]
         public IActionResult Post([FromBody] TipoDocumentoVentaAddDto tipoDocumentoVentaAddDto)
         {
-            this.tipoDocumentoVentaRepository.Save( 
-                new TipoDocumentoVenta()
-                {
-                    Id = tipoDocumentoVentaAddDto.Id,
-                    Descripcion = tipoDocumentoVentaAddDto.Descripcion,
-                    EsActivo = tipoDocumentoVentaAddDto.EsActivo
-                    
-                });
-            return Ok("Este Tipo de documento ha sido guardado.");
+            var result = this.tipoDocumentoVentaService.Save(tipoDocumentoVentaAddDto);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         
         [HttpPut("UpdateTipoDocumentoVenta")]
         public IActionResult Put([FromBody] TipoDocumentoVentaUpdateDto tipoDocumentoVentaUpdateDto)
         {
-            this.tipoDocumentoVentaRepository.Update(
-                new TipoDocumentoVenta()
-                {  
-                    Id = tipoDocumentoVentaUpdateDto.Id,
-                    Descripcion = tipoDocumentoVentaUpdateDto.Descripcion,
-                    EsActivo = tipoDocumentoVentaUpdateDto.EsActivo
-                });
-            return Ok("Este Tipo de documento ha sido actualizado.");
+            var result = this.tipoDocumentoVentaService.Update(tipoDocumentoVentaUpdateDto);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         // DELETE api/<TipoDocumentoVentaController>/5
         [HttpDelete("RemoveTipoDocumentoVenta")]
         public IActionResult Delete(TipoDocumentoVentaRemoveDto tipoDocumentoVentaRemove)
         {
-            this.tipoDocumentoVentaRepository.Remove
-            (
-                new TipoDocumentoVenta()
-                {
-                    Id = tipoDocumentoVentaRemove.Id
-                }
-            );
+            var result = this.tipoDocumentoVentaService.Remove(tipoDocumentoVentaRemove);
 
-            return Ok("Este Tipo de documento ha sido eliminado");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
     }
 }

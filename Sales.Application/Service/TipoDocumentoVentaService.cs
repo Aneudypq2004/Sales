@@ -30,8 +30,8 @@ namespace Sales.Application.Service
                     Id = tdv.Id,
                     Descripcion = tdv.Descripcion,
                     EsActivo = tdv.EsActivo,
-                    FechaRegistro = tdv.FechaRegistro
-
+                    FechaRegistro = tdv.FechaRegistro,
+                    IdUsuarioCreacion = tdv.IdUsuarioCreacion
                 }).ToList();
             }
             catch (Exception ex)

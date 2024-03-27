@@ -5,7 +5,7 @@
         TEntity? GetEntity(int Id);
         List<TEntity> FindAll(Func<TEntity, bool>filter);
 
-        bool Exists (Func<TEntity, bool> condition);
+        bool Exists (Func<TEntity, bool> filter);
 
         List<TEntity> GetEntities();
 

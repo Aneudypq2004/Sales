@@ -1,12 +1,14 @@
 ﻿
-
-namespace Sales.Domain.Entities
+namespace Sales.Domain.Entities.ModuloVentas
 {
     public class VentaModel 
     {
         public int Id { get; set; }
+        
         public string? NumeroVenta { get; set; }
 
+        public int? IdUsuario { get; set; }
+        public int ? IdTipoDocumentoVenta { get; set; }
         public string? NombreCliente { get; set; }
 
         public decimal? SubTotal { get; set; }

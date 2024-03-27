@@ -105,6 +105,7 @@ namespace Sales.Application.Service
             try
             {
                 var resultValid = this.IsValid(detalleVentaAddDto, DtoAction.Save);
+
                 this.detalleVentaRepository.Save(new DetalleVenta()
                 {
                     Id = detalleVentaAddDto!.Id,

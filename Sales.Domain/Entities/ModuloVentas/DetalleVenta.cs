@@ -1,4 +1,4 @@
-﻿using Sales.Domain.Core;
+﻿
 namespace Sales.Domain.Entities.ModuloVentas
 {
     public class DetalleVenta  
@@ -6,6 +6,7 @@ namespace Sales.Domain.Entities.ModuloVentas
         public int Id { get; set; }
 
         public int? IdVenta { get; set; }
+
         public int? IdProducto { get; set;}
 
         public string? MarcaProducto { get; set;}

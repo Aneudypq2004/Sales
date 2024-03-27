@@ -1,7 +1,7 @@
 ﻿
 using Sales.Domain.Core;
 
-namespace Sales.Domain.Entities
+namespace Sales.Domain.Entities.ModuloVentas
 {
     public class Venta : BaseEntity
     {

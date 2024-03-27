@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.DetalleVenta;
-using Sales.Api.Models;
-using Sales.Domain.Entities.ModuloVentas;
-using Sales.Infrastructure.Inteface;
+using Sales.Application.Contracts.Interfaces;
+using Sales.Application.Dtos.DetalleVenta;
+
 
 
 
@@ -14,17 +13,17 @@ namespace Sales.Api.Controllers
     [ApiController]
     public class DetalleVentaController : ControllerBase
     {
-        private IDetalleVentaRepository detalleVentaRepository;
+        private readonly IDetalleVentaService detalleVentaService;
 
-        public DetalleVentaController (IDetalleVentaRepository detalleVentaRepository)
+        public DetalleVentaController (IDetalleVentaService detalleVentaService)
         {
-            this.detalleVentaRepository = detalleVentaRepository;
+            this.detalleVentaService = detalleVentaService;
         }
 
     [HttpGet("GetDetalleVentas")]
         public IActionResult Get()
         {
-            var detalleVenta = this.detalleVentaRepository.GetEntities().Select(dv => new DetalleVentaGetModel()
+            /*var detalleVenta = this.detalleVentaService.GetEntities().Select(dv => new DetalleVentaGetModel()
             {  
                 Id = dv.Id,
                 MarcaProducto = dv.MarcaProducto,
@@ -33,81 +32,74 @@ namespace Sales.Api.Controllers
                 Cantidad = dv.Cantidad,
                 Precio = dv.Precio,
                 Total = dv.Total
-            }); 
+            });*/ 
+            var result = this.detalleVentaService.GetAll();
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
 
-            return Ok(detalleVenta);
+            return Ok(result);
         }
 
         
         [HttpGet("GetDetalleVentaById")]
         public IActionResult Get(int id)
         {
-            var detalleVenta = this.detalleVentaRepository.GetEntity(id);
+            var result = this.detalleVentaService.GetById(id);
 
-            DetalleVentaGetModel detalleVentaGetModel = new DetalleVentaGetModel()
+            if (!result.Success)
             {
-                Id = detalleVenta!.Id,
-                MarcaProducto = detalleVenta.MarcaProducto,
-                DescripcionProducto = detalleVenta.DescripcionProducto,
-                CategoriaProducto = detalleVenta.CategoriaProducto,
-                Cantidad = detalleVenta.Cantidad,
-                Precio = detalleVenta.Precio,
-                Total = detalleVenta.Total
-            };
+                return BadRequest(result);
+            }
 
-           
-            return Ok(detalleVentaGetModel);
+
+            return Ok(result);
         }
 
        
         [HttpPost("SaveDetalleVenta")]
         public IActionResult Post([FromBody] DetalleVentaAddDto detalleVentaAddDto)
         {
-            this.detalleVentaRepository.Save(new DetalleVenta()
-            {
-                MarcaProducto = detalleVentaAddDto.MarcaProducto,
-                DescripcionProducto = detalleVentaAddDto.DescripcionProducto,
-                CategoriaProducto = detalleVentaAddDto.CategoriaProducto,
-                Cantidad = detalleVentaAddDto.Cantidad,
-                Precio = detalleVentaAddDto.Precio,
-                Total = detalleVentaAddDto.Total
-            });
+            var result = this.detalleVentaService.Save(detalleVentaAddDto);
 
-            return Ok("El detalle de venta Se ha guardado.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+
+            return Ok(result);
         }
 
         
         [HttpPut("ActualizarDetalleVenta")]
         public IActionResult Put( [FromBody] DetalleVentaUpdateDto detalleVentaUpdateDto)
         {
+            var result = this.detalleVentaService.Update(detalleVentaUpdateDto);
 
-            this.detalleVentaRepository.Update
-            (
-                new DetalleVenta()
-                {
-                    MarcaProducto = detalleVentaUpdateDto.MarcaProducto,
-                    DescripcionProducto = detalleVentaUpdateDto.DescripcionProducto,
-                    CategoriaProducto = detalleVentaUpdateDto.CategoriaProducto,
-                    Cantidad = detalleVentaUpdateDto.Cantidad,
-                    Precio = detalleVentaUpdateDto.Precio,
-                    Total = detalleVentaUpdateDto.Total
-                }
-            );
-            return Ok("El detalle de venta ha sido actualizado");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+
+            return Ok(result);
         }
 
         
         [HttpDelete("RemoveDetalleVenta")]
         public IActionResult Delete(DetalleVentaRemoveDto detalleVentaRemoveDto)
         {
-            this.detalleVentaRepository.Remove
-            (
-                new DetalleVenta()
-                {
-                    Id = detalleVentaRemoveDto.Id
-                }
-            );
-            return Ok("Este detalle de venta ha sido eliminado");
+            var result = this.detalleVentaService.Remove(detalleVentaRemoveDto);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+
+            return Ok(result);
         }
     }
 }

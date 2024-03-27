@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Sales.Application.Contracts.Interfaces;
+using Sales.Application.Service;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.Inteface;
 using Sales.Infrastructure.Repositories;
@@ -18,6 +20,9 @@ builder.Services.AddScoped<IDetalleVentaRepository, DetalleVentaRepository>();
 builder.Services.AddScoped<ITipoDocumentoVentaRepository,TipoDocumentoVentaRepository>();
 
 //App Services
+builder.Services.AddTransient<ITipoDocumentoVentaService, TipoDocumentoVentaService>();
+builder.Services.AddTransient<IVentaService, VentaService>();
+builder.Services.AddTransient<IDetalleVentaService, DetalleVentaService>();
 
 builder.Services.AddControllers();
 

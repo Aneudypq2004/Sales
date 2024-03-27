@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.venta;
-using Sales.Domain.Entities;
-using Sales.Infrastructure.Inteface;
-
+using Sales.Application.Contracts.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,97 +9,93 @@ namespace Sales.Api.Controllers
     [ApiController]
     public class VentaController : ControllerBase
     {
-        private readonly IVentaRepository ventaRepository;
+        private readonly IVentaService ventaService;
 
-        public VentaController(IVentaRepository ventaRepository)
+        public VentaController(IVentaService ventaService)
         {
-            this.ventaRepository = ventaRepository;
+            this.ventaService = ventaService;
         }
 
         
         [HttpGet("GetVentas")]
         public IActionResult Get()
         {
-            var venta = this.ventaRepository.GetEntities().Select(v => new VentaGetModel()
+            /* var venta = this.ventaRepository.GetEntities().Select(v => new VentaGetModel()
+             {
+                 Id = v.Id,
+                 NombreCliente = v.NombreCliente,
+                 SubTotal = v.SubTotal,
+                 ImpuestoTotal = v.ImpuestoTotal,
+                 Total = v.Total,
+                 FechaRegistro = v.FechaRegistro
+             });*/
+
+            var result = this.ventaService.GetAll();
+            if (!result.Success)
             {
-                Id = v.Id,
-                NombreCliente = v.NombreCliente,
-                SubTotal = v.SubTotal,
-                ImpuestoTotal = v.ImpuestoTotal,
-                Total = v.Total,
-                FechaRegistro = v.FechaRegistro
-            });
-            return Ok(venta);
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+           
         }
 
         
         [HttpGet("GetVentaById")]
         public IActionResult Get(int id)
         {
-            var venta = this.ventaRepository.GetEntity(id);
-
-            VentaGetModel ventaGetModel = new VentaGetModel()
+            var result = this.ventaService.GetById(id);
+            if (!result.Success)
             {
-                Id = venta!.Id,
-                NombreCliente = venta.NombreCliente,
-                SubTotal = venta.SubTotal,
-                ImpuestoTotal = venta.ImpuestoTotal,
-                Total = venta.Total,
-                FechaRegistro = venta.FechaRegistro
-            };
+                return BadRequest(result);
+            }
 
-            return Ok(ventaGetModel);
+            return Ok(result);
         }
 
         
         [HttpPost("SaveVenta")]
-        public IActionResult Post([FromBody] VentaAddDto ventaAddDto)
+        public IActionResult Post([FromBody] Application.Dtos.venta.VentaAddDto ventaAddDto)
         {
-            this.ventaRepository.Save(
-                new Venta() {
-                    Id = ventaAddDto.Id,
-                    NombreCliente = ventaAddDto.NombreCliente,
-                    SubTotal = ventaAddDto.SubTotal,
-                    ImpuestoTotal = ventaAddDto.ImpuestoTotal,
-                    Total = ventaAddDto.Total,
-                    FechaRegistro = ventaAddDto.FechaRegistro
-                }
-            ); 
-            return Ok("La venta ha sido guardada.");
+            var result = this.ventaService.Save(ventaAddDto);
+
+            if (!result.Success )
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
 
-        // PUT api/<VentaController>/5
+        
         [HttpPut("ActualizarVenta")]
-        public IActionResult Put([FromBody] VentaUpdateDto ventaUpdateDto)
+        public IActionResult Put([FromBody] Application.Dtos.venta.VentaUpdateDto ventaUpdateDto)
         {
-            this.ventaRepository.Update
-            (
-                new Venta()
-                {   
-                   
-                    NombreCliente = ventaUpdateDto.NombreCliente,
-                    SubTotal = ventaUpdateDto.SubTotal,
-                    ImpuestoTotal = ventaUpdateDto.SubTotal,
-                    Total = ventaUpdateDto.Total,
-                }
-            );
+            this.ventaService.Update
+            (ventaUpdateDto);
+            var result = this.ventaService.Update(ventaUpdateDto);
 
-            return Ok("La Venta ha sido actualizada.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
 
-        // DELETE api/<VentaController>/5
+        
         [HttpDelete("RemoveVenta")]
-        public IActionResult Delete(VentaRemoveDto ventaRemoveDto)
+        public IActionResult Delete(Application.Dtos.venta.VentaRemoveDto ventaRemoveDto)
         {
-            this.ventaRepository.Remove
-            (
-                new Venta()
-                {
-                    Id = ventaRemoveDto.Id
-                }
-            );
+            this.ventaService.Remove(ventaRemoveDto);
+            
+                var result = this.ventaService.Remove(ventaRemoveDto);
 
-            return Ok("La Venta ha sido eliminada");
+                if (result.Success)
+                {
+                    return BadRequest(result);
+                }
+                return Ok(result);
+           
+                
         }
     }
 }

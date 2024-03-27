@@ -20,6 +20,10 @@ namespace Sales.Infrastructure.Repositories
             this.logger = logger;
             
         }
+        public override bool Exists(Func<TipoDocumentoVenta, bool> filter)
+        {
+            return base.Exists(filter);
+        }
 
         public override List<TipoDocumentoVenta> GetEntities()
         {
@@ -31,7 +35,7 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                if (context.TipoDocumentoVenta!.Any(tipoDocumentoVenta => tipoDocumentoVenta.Id == tipoDocumentoVenta.Id))
+                if (context.TipoDocumentoVenta!.Any(tdv => tdv.Descripcion == entity.Descripcion))
 
                     throw new TipoDocumentoVentaException("Este tipo de Documento de Venta ya existe");
 
@@ -56,7 +60,7 @@ namespace Sales.Infrastructure.Repositories
                 tipoDocumentoVentaToRemove.IdUsuarioElimino = entity.IdUsuarioElimino;
 
 
-                this.context.TipoDocumentoVenta!.Update(tipoDocumentoVentaToRemove);
+                this.context.TipoDocumentoVenta!.Update(entity);
                 this.context.SaveChanges();
 
             }
