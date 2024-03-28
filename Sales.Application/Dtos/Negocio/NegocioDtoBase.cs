@@ -1,6 +1,6 @@
 ﻿namespace Sales.Application.Dtos.Negocio
 {
-    public class NegocioDtoBase:BaseDto
+    public record NegocioDtoBase:BaseDto
     {
         public string? UrlLogo { get; set; }
         public string? NombreLogo { get; set; }

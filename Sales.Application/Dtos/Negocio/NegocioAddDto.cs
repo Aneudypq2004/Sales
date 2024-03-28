@@ -1,6 +1,6 @@
 ﻿namespace Sales.Application.Dtos.Negocio
 {
-    public class NegocioAddDto:NegocioDtoBase
+    public record NegocioAddDto:NegocioDtoBase
     {
 
     }

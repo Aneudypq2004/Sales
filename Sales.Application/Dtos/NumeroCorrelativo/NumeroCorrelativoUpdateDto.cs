@@ -1,6 +1,6 @@
 ﻿namespace Sales.Application.Dtos.NumeroCorrelativo
 {
-    public class NumeroCorrelativoUpdateDto:NumeroCorrelativoDtoBase
+    public record NumeroCorrelativoUpdateDto : NumeroCorrelativoDtoBase 
     {
     }
 }

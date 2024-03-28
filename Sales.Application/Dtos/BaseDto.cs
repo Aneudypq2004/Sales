@@ -1,6 +1,6 @@
 ﻿namespace Sales.Application.Dtos
 {
-    public class BaseDto
+    public record BaseDto
     {
         public int UsuarioId { get; set; }
         public DateTime ChangeTime { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Sales.Application.Dtos.NumeroCorrelativo
 {
-    public class NumeroCorrelativoDtoBase:BaseDto
+    public record NumeroCorrelativoDtoBase:BaseDto
     {
         public int Id { get; set; }
         public int? UltimoNumero { get; set; }
