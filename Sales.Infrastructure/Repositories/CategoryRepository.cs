@@ -24,18 +24,22 @@ namespace Sales.Infrastructure.Repositories
             return base.GetEntities().Where(ca => !ca.Eliminado).ToList();
         }
 
+        public override Category GetEntity(int id)
+        {
+            return base.GetEntity(id);
+        }
+
         public override void Update(Category entity)
         {
             try
             {
                 var CategoryToUpdate = this.GetEntity(entity.Id);
 
-                CategoryToUpdate.Id = entity.Id;
                 CategoryToUpdate.Descripcion = entity.Descripcion;
                 CategoryToUpdate.IdUsuarioMod = entity.IdUsuarioMod;
-                CategoryToUpdate.FechaMod = entity.FechaMod;
+                CategoryToUpdate.FechaMod = DateTime.Now;
 
-                context.Categoria.Update(CategoryToUpdate);
+                context.Categoria!.Update(CategoryToUpdate);
                 context.SaveChanges();
             }
             catch (Exception ex)
@@ -48,10 +52,10 @@ namespace Sales.Infrastructure.Repositories
         {
             try
             {
-                if (context.Categoria.Any(ca => ca.Id == entity.Id))
+                if (context.Categoria!.Any(ca => ca.Id == entity.Id))
                     throw new CategoryException("La categoria se encuentra registrada.");
 
-                context.Categoria.Add(entity);
+                context.Categoria!.Add(entity);
                 this.context.SaveChanges();
             }
             catch (Exception ex)

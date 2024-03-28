@@ -30,7 +30,7 @@ namespace Sales.Application.Services
                 result.Data = categoryRepository.GetEntities().Select(cd => new CategoryGetModel
                 {
                     Id = cd.Id,
-                    Description = cd.Descripcion,
+                    Descripcion = cd.Descripcion,
                     FechaRegistro = cd.FechaRegistro
                 }).ToList();
             }
@@ -55,7 +55,7 @@ namespace Sales.Application.Services
                 result.Data = new CategoryGetModel()
                 {
                     Id = category.Id,
-                    Description = category.Descripcion,
+                    Descripcion = category.Descripcion,
                     FechaRegistro = category.FechaRegistro
                 };
             }
@@ -79,6 +79,7 @@ namespace Sales.Application.Services
 
                 if (!resultIsValid.Success)
                 {
+                    result.Success = resultIsValid.Success;
                     result.Message = resultIsValid.Message;
                     return result;
                 }
@@ -109,6 +110,7 @@ namespace Sales.Application.Services
 
                 if (!resultIsValid.Success)
                 {
+                    result.Success = resultIsValid.Success;
                     result.Message = resultIsValid.Message;
                     return result;
                 }

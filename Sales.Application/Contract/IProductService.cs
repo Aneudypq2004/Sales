@@ -6,6 +6,6 @@ namespace Sales.Application.Contract
 {
     public interface IProductService : IBaseService<ProductGetModel, ProductAddDto, ProductUpdateDto, ProductRemoveDto>
     {
-        ServiceResult<ProductGetModel> GetProductsByCategory(int categoryId);
+        ServiceResult<List<ProductGetModel>> GetProductsByCategory(int categoryId);
     }
 }

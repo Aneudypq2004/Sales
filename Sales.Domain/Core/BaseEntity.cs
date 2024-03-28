@@ -5,7 +5,7 @@
 
         public bool EsActivo { get; set; }
 
-        public DateTime FechaRegistro { get; set; }
+        public DateTime FechaRegistro { get; set; } = DateTime.Now;
 
         public int IdUsuarioCreacion { get; set; }
 

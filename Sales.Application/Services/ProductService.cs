@@ -35,7 +35,7 @@ namespace Sales.Application.Services
                     Stock = cd.Stock,
                     UrlImagen = cd.UrlImagen,
                     NombreImagen = cd.NombreImagen,
-                    Precio = cd.Precio,
+                    Precio = cd.Precio
                 }).ToList();
             }
             catch (Exception ex)
@@ -71,31 +71,29 @@ namespace Sales.Application.Services
             {
                 result.Success = false;
                 result.Message = "Error obteniendo el producto.";
-                this.logger.LogError(result.Message, ex.ToString());
+                logger.LogError(result.Message, ex.ToString());
             }
 
             return result;
         }
 
-        public ServiceResult<ProductGetModel> GetProductsByCategory(int categoryId)
+        public ServiceResult<List<ProductGetModel>> GetProductsByCategory(int categoryId)
         {
-            ServiceResult<ProductGetModel> result = new ServiceResult<ProductGetModel>();
+            ServiceResult<List<ProductGetModel>> result = new ServiceResult<List<ProductGetModel>> ();
 
             try
             {
-                var product = productRepository.GetEntity(categoryId);
-
-                result.Data = new ProductGetModel()
+                result.Data = productRepository.GetProductsByCategory(categoryId).Select(cd => new ProductGetModel
                 {
-                    Id = product.Id,
-                    Marca = product.Marca,
-                    Descripcion = product.Descripcion,
-                    IdCategory = product.IdCategoria,
-                    Stock = product.Stock,
-                    UrlImagen = product.UrlImagen,
-                    NombreImagen = product.NombreImagen,
-                    Precio = product.Precio
-                };
+                    Id = cd.Id,
+                    Marca = cd.Marca,
+                    Descripcion = cd.Descripcion,
+                    IdCategory = cd.IdCategoria,
+                    Stock = cd.Stock,
+                    UrlImagen = cd.UrlImagen,
+                    NombreImagen = cd.NombreImagen,
+                    Precio = cd.Precio
+                }).ToList();
             }
             catch (Exception ex)
             {

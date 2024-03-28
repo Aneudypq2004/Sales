@@ -29,8 +29,6 @@ namespace Sales.Api.Controllers
             return Ok(result);
         }
 
-        
-
         [HttpGet("GetProductById")]
         public IActionResult Get(int id)
         {
@@ -44,6 +42,18 @@ namespace Sales.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetProductsByCategory")]
+        public IActionResult GetByCategory(int categoryId)
+        {
+            var result = productService.GetProductsByCategory(categoryId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
 
         [HttpPost("SaveProduct")]
         public IActionResult Post([FromBody] ProductAddDto productAdd)

@@ -20,24 +20,34 @@ namespace Sales.Infrastructure.Repositories
 
         }
 
+        public override List<Product> GetEntities()
+        {
+            return base.GetEntities().Where(pro => !pro.Eliminado).ToList();
+        }
+
+        public override Product GetEntity(int id)
+        {
+            return base.GetEntity(id);
+        }
+        
         public List<ProductModel> GetProductsByCategory(int categoryId)
         {
             List<ProductModel> products = new List<ProductModel>();
             try
             {
-                var query = (from pro in this.context.Producto
-                             join ca in context.Categoria on pro.IdCategoria equals ca.Id
+                products = (from pro in this.context.Producto
+                             join ca in context.Categoria! on pro.IdCategoria equals ca.Id
                              where pro.IdCategoria == categoryId
                              select new ProductModel()
                              {
                                  Id = pro.Id,
-                                 IdCategory = ca.Id,
+                                 IdCategoria = ca.Id,
                                  Marca = pro.Marca,
                                  Descripcion = pro.Descripcion,
                                  Stock = pro.Stock,
                                  UrlImagen = pro.UrlImagen,
                                  NombreImagen = pro.NombreImagen,
-                                 Precio = pro.Precio
+                                 Precio = pro.Precio,
                              }).ToList();
             }
             catch (Exception ex)
@@ -49,45 +59,42 @@ namespace Sales.Infrastructure.Repositories
             return products;
         }
 
-
-        public override List<Product> GetEntities()
-        {
-            return base.GetEntities().Where(pro => !pro.Eliminado).ToList();
-        }
-
         public override void Update(Product entity)
         {
             try
             {
                 var ProductToUpdate = this.GetEntity(entity.Id);
-
-                ProductToUpdate.Id = entity.Id;
+                ProductToUpdate.Marca = entity.Marca;
                 ProductToUpdate.Descripcion = entity.Descripcion;
+                ProductToUpdate.Stock = entity.Stock;
+                ProductToUpdate.IdCategoria = entity.IdCategoria;
+                ProductToUpdate.UrlImagen = entity.UrlImagen;
+                ProductToUpdate.NombreImagen = entity.NombreImagen;
+                ProductToUpdate.Precio = entity.Precio;
                 ProductToUpdate.IdUsuarioMod = entity.IdUsuarioMod;
-                ProductToUpdate.FechaMod = entity.FechaMod;
+                ProductToUpdate.FechaMod = DateTime.Now;
 
-                context.Producto.Update(ProductToUpdate);
+                context.Producto!.Update(ProductToUpdate);
                 context.SaveChanges();
             }
             catch (Exception ex)
             {
                 logger.LogError("Error actualizando el producto", ex);
             }
+
         }
 
         public override void Save(Product entity)
         {
             try
             {
-                if (context.Producto.Any(pro => pro.Id == entity.Id))
-                    throw new CategoryException("El producto encuentra registrada.");
-
-                context.Producto.Add(entity);
+                entity.FechaRegistro = DateTime.Now;
+                context.Producto!.Add(entity);
                 this.context.SaveChanges();
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.ToString());
                 logger.LogError("Error guardando el producto", ex); ;
             }
         }

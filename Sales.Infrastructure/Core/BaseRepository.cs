@@ -33,7 +33,7 @@ namespace Sales.Infrastructure.Core
 
         public virtual TEntity GetEntity(int id)
         {
-            return DbEntity.Find(id);
+            return DbEntity.Find(id)!;
         }
 
         public virtual void Remove(TEntity entity)
