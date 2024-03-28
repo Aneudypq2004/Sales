@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.NumeroCorrelativo;
-using Sales.Api.models;
+using Sales.Application.Dtos.NumeroCorrelativo;
+using Sales.Application.Models;
 using Sales.Domain.Entities.negocios;
 using Sales.Infrastructure.Interface;
-using static System.Collections.Specialized.BitVector32;
+
 
 
 namespace Sales.Api.Controllers

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.models;
-using Sales.Api.Dtos.Negocio;
+using Sales.Application.Models;
 using Sales.Infrastructure.Interface;
 using Sales.Domain.Entities.negocios;
+using Sales.Application.Dtos.Negocio;
 
 namespace Sales.Api.Controllers
 {
@@ -90,7 +90,7 @@ namespace Sales.Api.Controllers
 
         // PUT api/<NegocioController>/5
         [HttpPut("UpdateNegocio")]
-        public ActionResult Put(int id, [FromBody] NegocioUpdateDto negocioUpdateDto)
+        public ActionResult Put([FromBody] NegocioUpdateDto negocioUpdateDto)
         {
             try
             {

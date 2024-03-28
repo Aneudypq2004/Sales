@@ -1,23 +1,25 @@
-﻿using Microsoft.Extensions.Logging;
+﻿
 using Sales.Domain.Entities.negocios;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.core;
 using Sales.Infrastructure.Exeption;
 using Sales.Infrastructure.Interface;
-using System.Security.Cryptography.X509Certificates;
+using Sales.Infrastructure.Services;
+
 
 namespace Sales.Infrastructure.Repositories
 {
     public class NumeroCorrelativoRepository : BaseRepository<NumeroCorrelativo>, INumeroCorrelativoRepository
     {
         private readonly SalesContext context;
-        private readonly ILogger<NumeroCorrelativoRepository> logger;
+        private readonly LoggerService<NumeroCorrelativoRepository> logger;
 
-        public NumeroCorrelativoRepository(SalesContext context,ILogger<NumeroCorrelativoRepository>logger):base(context)
+        public NumeroCorrelativoRepository(SalesContext context, LoggerService<NumeroCorrelativo> logger):base(context)
         {
             this.context = context;
-            this.logger=logger;
+            this.logger = logger;
         }
+        
         public override void Save(NumeroCorrelativo entity)
         {
             try
@@ -37,7 +39,10 @@ namespace Sales.Infrastructure.Repositories
         {
             return context.NumeroCorrelativo!.ToList();
         }
-
+        public override NumeroCorrelativo GetEntity(int Id)
+        {
+            return context.NumeroCorrelativo!.Find((short)Id)!;
+        }
         public override void Update(NumeroCorrelativo entity)
         {
             try

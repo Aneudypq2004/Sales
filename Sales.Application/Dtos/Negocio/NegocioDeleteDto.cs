@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Dtos.Negocio
+﻿namespace Sales.Application.Dtos.Negocio
 {
     public class NegocioDeleteDto:BaseDto
     {

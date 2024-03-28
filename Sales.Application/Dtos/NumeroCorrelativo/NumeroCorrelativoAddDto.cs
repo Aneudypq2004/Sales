@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.Dtos.NumeroCorrelativo
+﻿namespace Sales.Application.Dtos.NumeroCorrelativo
 {
     public class NumeroCorrelativoAddDto:NumeroCorrelativoDtoBase
     {

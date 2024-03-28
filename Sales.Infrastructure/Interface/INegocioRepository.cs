@@ -7,5 +7,6 @@ namespace Sales.Infrastructure.Interface
 {
     public interface INegocioRepository : IBaseRepository<Negocio>
     {
+        Negocio? GetNegocioByEmail(string Email);
     }
 }

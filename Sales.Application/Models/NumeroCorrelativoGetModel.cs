@@ -1,4 +1,4 @@
-﻿namespace Sales.Api.models
+﻿namespace Sales.Application.Models
 {
     public class NumeroCorrelativoGetModel
     {

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Sales.Api.models
+﻿namespace Sales.Application.Models
 {
     public class NegocioGetModel
     {

@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿
 using Sales.Domain.Entities.negocios;
 using Sales.Infrastructure.Context;
 using Sales.Infrastructure.core;
 using Sales.Infrastructure.Exeption;
 using Sales.Infrastructure.Interface;
+using Sales.Infrastructure.Services;
 
 
 namespace Sales.Infrastructure.Repositories
@@ -11,17 +12,41 @@ namespace Sales.Infrastructure.Repositories
     public class NegocioRepocitory : BaseRepository<Negocio>, INegocioRepository
     {
         private readonly SalesContext context;
-        private readonly ILogger<NegocioRepocitory> logger;
+        private readonly LoggerService<NegocioRepocitory> logger;
 
-        public NegocioRepocitory(SalesContext context, ILogger<NegocioRepocitory> logger) : base(context)
+        public NegocioRepocitory(SalesContext context, LoggerService<NegocioRepocitory> logger) : base(context)
         {
             this.context = context;
             this.logger = logger;
         }
 
+        public override Negocio GetEntity(int Id)
+        {
+            return context.Negocio!.Find(Id)!;
+        }
         public override List<Negocio> GetEntities()
         {
-            return base.GetEntities().Where(Negocio => !Negocio.Eliminado).ToList();
+            try
+            {
+                return context.Negocio!.ToList();
+            }
+            catch (Exception)
+            {
+
+                throw new NegocioException("no se pudo obtener el negocio");
+            }
+        }
+        public Negocio? GetNegocioByEmail(string Email) 
+        {
+            try
+            {
+                return context.Negocio!.FirstOrDefault(n => n.Correo!.Equals(Email));
+            }
+            catch (Exception)
+            {
+
+                throw new NegocioException("no se pudo encontrar el correo de el negocio");
+            }
         }
         public override void Update(Negocio entity)
         {
@@ -47,7 +72,7 @@ namespace Sales.Infrastructure.Repositories
                 throw new ConfigurationException(exc.Message);
             }
         }
-            public override void Save(Negocio entity)
+        public override void Save(Negocio entity)
         {
             try
             {

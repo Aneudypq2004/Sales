@@ -4,16 +4,16 @@ using Sales.Infrastructure.Context;
 
 namespace Sales.Infrastructure.core
 {
-    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         private readonly SalesContext context;
         private readonly DbSet<TEntity> DbEntities;
-        protected BaseRepository(SalesContext context)
+        public BaseRepository(SalesContext context)
         {
             this.context = context;
             this.DbEntities = context.Set<TEntity>();
         }
-        public virtual bool Exists(Func<TEntity, bool> filter)
+        public bool Exists(Func<TEntity, bool> filter)
         {
             return DbEntities.Any(filter);
         }
